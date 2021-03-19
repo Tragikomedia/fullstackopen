@@ -14,7 +14,7 @@ const App = () => {
   ];
 
   const buttons = data.map((opinion) => (
-    <Button text={opinion.text} handleClick={opinion.handler} />
+    <Button text={opinion.text} handleClick={opinion.handler} key={opinion.text}/>
   ));
 
   return (

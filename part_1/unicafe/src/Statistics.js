@@ -25,12 +25,14 @@ const Statistics = ({ data }) => {
     { text: "positive", number: positive },
   ];
   const stats = statData.map((stat) => (
-    <Statistic text={stat.text} number={stat.number} />
+    <Statistic text={stat.text} number={stat.number} key={stat.text} />
   ));
   return (
     <>
       <h2>Statistics</h2>
-      {stats}
+      <table>
+        <tbody>{stats}</tbody>
+      </table>
     </>
   );
 };
