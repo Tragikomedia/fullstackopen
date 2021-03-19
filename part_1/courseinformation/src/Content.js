@@ -1,10 +1,10 @@
 import Part from "./Part";
 
-const Content = ({ content }) => {
-  const parts = content.map((el) => (
-    <Part part={el.name} exercises={el.exercises} />
+const Content = ({ parts }) => {
+  const content = parts.map((part) => (
+    <Part part={part.name} exercises={part.exercises} />
   ));
-  return <>{parts}</>;
+  return <>{content}</>;
 };
 
 export default Content;
