@@ -1,4 +1,4 @@
-import Stat from "./Stat";
+import Statistic from "./Statistic";
 
 const Statistics = ({ data }) => {
   const all = data.reduce((acc, stat) => acc + stat.number, 0);
@@ -25,7 +25,7 @@ const Statistics = ({ data }) => {
     { text: "positive", number: positive },
   ];
   const stats = statData.map((stat) => (
-    <Stat text={stat.text} number={stat.number} />
+    <Statistic text={stat.text} number={stat.number} />
   ));
   return (
     <>
