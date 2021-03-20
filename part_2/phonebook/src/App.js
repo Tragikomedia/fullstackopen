@@ -1,21 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
 import Filter from "./Filter";
+import axios from 'axios';
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-1234567" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [visiblePeople, setVisiblePeople] = useState({
     filter: "",
     list: [...persons],
   });
+
+  const fetchContacts = async () => {
+    const res = await axios.get('http://localhost:3001/persons');
+    setPersons(res.data);
+    setVisiblePeople({filter: "", list: res.data});
+  }
+
+  useEffect( () => {
+    fetchContacts();
+  }, []);
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -30,7 +37,7 @@ const App = () => {
     setVisiblePeople({
       filter,
       list: persons.filter(({ name }) =>
-        name.toLowerCase().startsWith(filter.toLowerCase())
+        name.toLowerCase().includes(filter.toLowerCase())
       ),
     });
   };

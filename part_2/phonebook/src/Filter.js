@@ -3,7 +3,7 @@ import Input from "./Input";
 const Filter = ({ value, handleChange }) => (
   <>
     <Input
-      label={"Show names starting with"}
+      label={"Show names containing"}
       type={"text"}
       value={value}
       handleChange={handleChange}
