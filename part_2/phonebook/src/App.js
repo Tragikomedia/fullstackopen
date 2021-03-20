@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
-import Input from "./Input";
+import Filter from "./Filter";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -12,7 +12,10 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
-  const [visiblePeople, setVisiblePeople] = useState({filter: "", list: [...persons]});
+  const [visiblePeople, setVisiblePeople] = useState({
+    filter: "",
+    list: [...persons],
+  });
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -26,7 +29,9 @@ const App = () => {
     const filter = event.target.value;
     setVisiblePeople({
       filter,
-      list: persons.filter(({ name }) => name.startsWith(filter))
+      list: persons.filter(({ name }) =>
+        name.toLowerCase().startsWith(filter.toLowerCase())
+      ),
     });
   };
 
@@ -37,13 +42,13 @@ const App = () => {
     event.preventDefault();
     if (nameRepeats(newName, persons))
       return alert(`Name ${newName} already exists!`);
-    const newPerson = { name: newName, number: newPhone }
+    const newPerson = { name: newName, number: newPhone };
     setPersons([...persons, newPerson]);
     setNewName("");
     setNewPhone("");
     setVisiblePeople({
       filter: "",
-      list: [...persons, newPerson]
+      list: [...persons, newPerson],
     });
   };
 
@@ -65,12 +70,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Input
-        label={"Show names starting with"}
-        type={"text"}
-        value={visiblePeople.filter}
-        handleChange={handleFilterChange}
-      />
+      <Filter value={visiblePeople.filter} handleChange={handleFilterChange} />
       <h2>Add new contacts</h2>
       <AddContactForm handleSubmit={addContact} inputData={inputData} />
       <h2>Numbers</h2>
