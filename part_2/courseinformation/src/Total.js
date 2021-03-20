@@ -1,5 +1,5 @@
 const Total = ({ parts }) => {
-  const total = parts.map(part => part.exercises).reduce((acc, num) => acc + num);
+  const total = parts.reduce((acc, {exercises}) => acc + exercises, 0);
   return (
     <>
       <p>Number of exercises {total}</p>
