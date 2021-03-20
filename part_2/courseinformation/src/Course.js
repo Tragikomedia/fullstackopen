@@ -8,7 +8,7 @@ const Course = ({ course }) => (
     {course.parts.map(({ name, exercises, id }) => (
       <Part name={name} exercises={exercises} key={id} />
     ))}
-    <Total parts={course.parts}/>
+    <Total parts={course.parts} />
   </div>
 );
 
