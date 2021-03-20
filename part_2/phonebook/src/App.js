@@ -8,8 +8,11 @@ const App = () => {
     setNewName(event.target.value);
   };
 
+  const nameRepeats = (name, persons) => persons.find(person => person.name === name);
+
   const addContact = (event) => {
     event.preventDefault();
+    if (nameRepeats(newName, persons)) return alert(`Name ${newName} already exists!`);
     setPersons([...persons, { name: newName }]);
     setNewName("");
   };
