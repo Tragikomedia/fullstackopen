@@ -24,6 +24,11 @@ function App() {
     );
   };
 
+  const showSpecific = (country) => {
+    setFilter(country.name);
+    setPossibilities([country]);
+  }
+
   useEffect(() => {
     fetchCountries();
   }, []);
@@ -31,7 +36,7 @@ function App() {
   return (
     <div>
       <Searchbox value={filter} handleChange={handleFilterChange} />
-      <Display countries={possibilities} />
+      <Display countries={possibilities} handleClick={showSpecific}/>
     </div>
   );
 }
