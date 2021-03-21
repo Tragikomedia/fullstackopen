@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "040-123456",
+      "number": "888",
       "id": 1
     },
     {
@@ -22,12 +22,12 @@
     },
     {
       "name": "Piotr Czachowski",
-      "number": "945 643 234",
+      "number": "6662",
       "id": 5
     },
     {
       "name": "Piotr Dumanowski",
-      "number": "535234133",
+      "number": "222",
       "id": 6
     }
   ]

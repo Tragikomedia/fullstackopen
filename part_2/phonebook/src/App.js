@@ -57,10 +57,25 @@ const App = () => {
     });
   };
 
+  const updateNumber = async (contact) => {
+    let updatedContact = { ...contact, number: newPhone };
+    const savedContact = await db.update(updatedContact);
+    const updateList = (list) =>
+      list.map((person) =>
+        person.id !== savedContact.id ? person : savedContact
+      );
+    setPersons(updateList(persons));
+    setVisiblePeople({
+      ...visiblePeople,
+      list: updateList(visiblePeople.list),
+    });
+    cleanInput();
+  };
+
   const addContact = async (event) => {
     event.preventDefault();
-    if (nameRepeats(newName, persons))
-      return alert(`Name ${newName} already exists!`);
+    const existingContact = nameRepeats(newName, persons);
+    if (existingContact) return updateNumber(existingContact);
     const newPerson = { name: newName, number: newPhone };
     const fullPerson = await db.create(newPerson);
     cleanInput();
