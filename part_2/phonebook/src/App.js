@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
 import Filter from "./Filter";
-import axios from 'axios';
+import db from './db';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -14,14 +14,9 @@ const App = () => {
   });
 
   const fetchContacts = async () => {
-    const res = await axios.get('http://localhost:3001/persons');
-    setPersons(res.data);
-    setVisiblePeople({filter: "", list: res.data});
-  }
-
-  const saveContact = async (contact) => {
-    const {data} = await axios.post('http://localhost:3001/persons', contact);
-    console.log(data);
+    const data = await db.getAll();
+    setPersons(data);
+    setVisiblePeople({filter: "", list: data});
   }
 
   useEffect( () => {
@@ -50,19 +45,27 @@ const App = () => {
   const nameRepeats = (name, persons) =>
     persons.find((person) => person.name === name);
 
+    const cleanInput = () => {
+      setNewName("");
+      setNewPhone("");
+    }
+
+    const updateContacts = (person) => {
+      setPersons([...persons, person]);
+      setVisiblePeople({
+        filter: "",
+        list: [...persons, person],
+      });
+    }
+
   const addContact = async (event) => {
     event.preventDefault();
     if (nameRepeats(newName, persons))
       return alert(`Name ${newName} already exists!`);
     const newPerson = { name: newName, number: newPhone };
-    await saveContact(newPerson);
-    setPersons([...persons, newPerson]);
-    setNewName("");
-    setNewPhone("");
-    setVisiblePeople({
-      filter: "",
-      list: [...persons, newPerson],
-    });
+    const fullPerson = await db.create(newPerson);
+    cleanInput();
+    updateContacts(fullPerson);
   };
 
   const inputData = [
