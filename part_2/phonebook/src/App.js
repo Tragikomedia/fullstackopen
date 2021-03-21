@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
 import Filter from "./Filter";
-import db from './db';
+import db from "./db";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -16,13 +16,12 @@ const App = () => {
   const fetchContacts = async () => {
     const data = await db.getAll();
     setPersons(data);
-    setVisiblePeople({filter: "", list: data});
-  }
+    setVisiblePeople({ filter: "", list: data });
+  };
 
-  useEffect( () => {
+  useEffect(() => {
     fetchContacts();
   }, []);
-
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -45,18 +44,18 @@ const App = () => {
   const nameRepeats = (name, persons) =>
     persons.find((person) => person.name === name);
 
-    const cleanInput = () => {
-      setNewName("");
-      setNewPhone("");
-    }
+  const cleanInput = () => {
+    setNewName("");
+    setNewPhone("");
+  };
 
-    const updateContacts = (person) => {
-      setPersons([...persons, person]);
-      setVisiblePeople({
-        filter: "",
-        list: [...persons, person],
-      });
-    }
+  const updateContacts = (person) => {
+    setPersons([...persons, person]);
+    setVisiblePeople({
+      filter: "",
+      list: [...persons, person],
+    });
+  };
 
   const addContact = async (event) => {
     event.preventDefault();
@@ -66,6 +65,21 @@ const App = () => {
     const fullPerson = await db.create(newPerson);
     cleanInput();
     updateContacts(fullPerson);
+  };
+
+  const filterOutContact = ({ id }) => {
+    const removeContact = (contacts) =>
+      contacts.filter((contact) => contact.id !== id);
+    setPersons(removeContact(persons));
+    setVisiblePeople({
+      ...visiblePeople,
+      list: removeContact(visiblePeople.list),
+    });
+  };
+
+  const deleteContact = async (contact) => {
+    await db.delContact(contact);
+    filterOutContact(contact);
   };
 
   const inputData = [
@@ -90,7 +104,7 @@ const App = () => {
       <h2>Add new contacts</h2>
       <AddContactForm handleSubmit={addContact} inputData={inputData} />
       <h2>Numbers</h2>
-      <Display contacts={visiblePeople.list} />
+      <Display contacts={visiblePeople.list} handleDelete={deleteContact} />
     </div>
   );
 };
