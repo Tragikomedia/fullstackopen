@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
 import Filter from "./Filter";
+import Notification from "./Notification";
 import db from "./db";
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
     filter: "",
     list: [...persons],
   });
+  const [notification, setNotification] = useState({});
 
   const fetchContacts = async () => {
     const data = await db.getAll();
@@ -30,6 +32,13 @@ const App = () => {
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value);
   };
+
+  const showNotification = (newNotification) => {
+    setNotification(newNotification);
+    setTimeout(() => {
+      setNotification({});
+    }, 5000);
+  }
 
   const handleFilterChange = (event) => {
     const filter = event.target.value;
@@ -59,7 +68,8 @@ const App = () => {
 
   const updateNumber = async (contact) => {
     let updatedContact = { ...contact, number: newPhone };
-    const savedContact = await db.update(updatedContact);
+    const {cancel, savedContact} = await db.update(updatedContact);
+    if (cancel) return;
     const updateList = (list) =>
       list.map((person) =>
         person.id !== savedContact.id ? person : savedContact
@@ -70,6 +80,7 @@ const App = () => {
       list: updateList(visiblePeople.list),
     });
     cleanInput();
+    showNotification({message: "Phone number changed", type: "message"});
   };
 
   const addContact = async (event) => {
@@ -80,6 +91,7 @@ const App = () => {
     const fullPerson = await db.create(newPerson);
     cleanInput();
     updateContacts(fullPerson);
+    showNotification({message: `${fullPerson.name} added to contacts`, type: "message"});
   };
 
   const filterOutContact = ({ id }) => {
@@ -93,8 +105,10 @@ const App = () => {
   };
 
   const deleteContact = async (contact) => {
-    await db.delContact(contact);
+    const {cancel} = await db.delContact(contact);
+    if (cancel) return;
     filterOutContact(contact);
+    showNotification({message: `${contact.name} removed from contacts`, type: "message"});
   };
 
   const inputData = [
@@ -115,6 +129,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification notification={notification}/>
       <Filter value={visiblePeople.filter} handleChange={handleFilterChange} />
       <h2>Add new contacts</h2>
       <AddContactForm handleSubmit={addContact} inputData={inputData} />
