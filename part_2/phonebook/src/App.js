@@ -19,6 +19,11 @@ const App = () => {
     setVisiblePeople({filter: "", list: res.data});
   }
 
+  const saveContact = async (contact) => {
+    const {data} = await axios.post('http://localhost:3001/persons', contact);
+    console.log(data);
+  }
+
   useEffect( () => {
     fetchContacts();
   }, []);
@@ -45,11 +50,12 @@ const App = () => {
   const nameRepeats = (name, persons) =>
     persons.find((person) => person.name === name);
 
-  const addContact = (event) => {
+  const addContact = async (event) => {
     event.preventDefault();
     if (nameRepeats(newName, persons))
       return alert(`Name ${newName} already exists!`);
     const newPerson = { name: newName, number: newPhone };
+    await saveContact(newPerson);
     setPersons([...persons, newPerson]);
     setNewName("");
     setNewPhone("");
