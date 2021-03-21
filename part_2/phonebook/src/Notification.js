@@ -15,7 +15,9 @@ const Notification = ({ notification }) => {
     <div style={{ ...basicStyle, ...typeStyle }}>
       <p style={{ margin: 0 }}>{message}</p>
     </div>
-  ) : <div></div>;
+  ) : (
+    <div></div>
+  );
 };
 
 export default Notification;

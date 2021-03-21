@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AddContactForm from "./AddContactForm";
 import Display from "./Display";
 import Filter from "./Filter";
@@ -15,15 +15,28 @@ const App = () => {
   });
   const [notification, setNotification] = useState({});
 
-  const fetchContacts = async () => {
-    const data = await db.getAll();
+  const showNotification = (newNotification) => {
+    setNotification(newNotification);
+    setTimeout(() => {
+      setNotification({});
+    }, 5000);
+  };
+
+  const showError = useCallback(
+    (error) => showNotification({ message: error, type: "error" }),
+    []
+  );
+
+  const fetchContacts = useCallback(async () => {
+    const { data, error } = await db.getAll();
+    if (error) return showError(error);
     setPersons(data);
     setVisiblePeople({ filter: "", list: data });
-  };
+  }, [showError]);
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [fetchContacts]);
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -32,13 +45,6 @@ const App = () => {
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value);
   };
-
-  const showNotification = (newNotification) => {
-    setNotification(newNotification);
-    setTimeout(() => {
-      setNotification({});
-    }, 5000);
-  }
 
   const handleFilterChange = (event) => {
     const filter = event.target.value;
@@ -68,7 +74,8 @@ const App = () => {
 
   const updateNumber = async (contact) => {
     let updatedContact = { ...contact, number: newPhone };
-    const {cancel, savedContact} = await db.update(updatedContact);
+    const { cancel, savedContact, error } = await db.update(updatedContact);
+    if (error) return showError(error);
     if (cancel) return;
     const updateList = (list) =>
       list.map((person) =>
@@ -80,7 +87,7 @@ const App = () => {
       list: updateList(visiblePeople.list),
     });
     cleanInput();
-    showNotification({message: "Phone number changed", type: "message"});
+    showNotification({ message: "Phone number changed", type: "message" });
   };
 
   const addContact = async (event) => {
@@ -88,10 +95,14 @@ const App = () => {
     const existingContact = nameRepeats(newName, persons);
     if (existingContact) return updateNumber(existingContact);
     const newPerson = { name: newName, number: newPhone };
-    const fullPerson = await db.create(newPerson);
+    const { error, fullPerson } = await db.create(newPerson);
+    if (error) return showError(error);
     cleanInput();
     updateContacts(fullPerson);
-    showNotification({message: `${fullPerson.name} added to contacts`, type: "message"});
+    showNotification({
+      message: `${fullPerson.name} added to contacts`,
+      type: "message",
+    });
   };
 
   const filterOutContact = ({ id }) => {
@@ -105,10 +116,14 @@ const App = () => {
   };
 
   const deleteContact = async (contact) => {
-    const {cancel} = await db.delContact(contact);
+    const { cancel, error } = await db.delContact(contact);
     if (cancel) return;
+    if (error) return showError(error);
     filterOutContact(contact);
-    showNotification({message: `${contact.name} removed from contacts`, type: "message"});
+    showNotification({
+      message: `${contact.name} removed from contacts`,
+      type: "message",
+    });
   };
 
   const inputData = [
@@ -129,7 +144,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification notification={notification}/>
+      <Notification notification={notification} />
       <Filter value={visiblePeople.filter} handleChange={handleFilterChange} />
       <h2>Add new contacts</h2>
       <AddContactForm handleSubmit={addContact} inputData={inputData} />

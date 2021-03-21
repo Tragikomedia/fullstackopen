@@ -1,20 +1,38 @@
 import axios from "axios";
 const baseUrl = "http://localhost:3001/persons";
 
+const connectionError = { error: "Cannot connect to database" };
+const notFoundError = (element) => ({
+  error: `Could not find ${element} on the server`,
+});
+
 const getAll = async () => {
-  const { data } = await axios.get(baseUrl);
-  return data;
+  try {
+    const { data } = await axios.get(baseUrl);
+    return { data };
+  } catch {
+    return connectionError;
+  }
 };
 
 const create = async (contact) => {
-  const { data } = await axios.post(baseUrl, contact);
-  return data;
+  try {
+    const { data } = await axios.post(baseUrl, contact);
+    return { fullPerson: data };
+  } catch {
+    return connectionError;
+  }
 };
 
 const delContact = async (contact) => {
   if (!window.confirm(`Are you sure you want to delete ${contact.name}?`))
     return { cancel: true };
-  await axios.delete(`${baseUrl}/${contact.id}`);
+  try {
+    await axios.delete(`${baseUrl}/${contact.id}`);
+    return {};
+  } catch {
+    return connectionError;
+  }
 };
 
 const update = async (contact) => {
@@ -24,8 +42,12 @@ const update = async (contact) => {
     )
   )
     return { cancel: true };
-  const { data } = await axios.put(`${baseUrl}/${contact.id}`, contact);
-  return {savedContact: data};
+  try {
+    const { data } = await axios.put(`${baseUrl}/${contact.id}`, contact);
+    return { savedContact: data };
+  } catch {
+    return notFoundError(contact.name);
+  }
 };
 
 const toExport = { getAll, create, delContact, update };
