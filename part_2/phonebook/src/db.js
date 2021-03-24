@@ -9,7 +9,7 @@ const notFoundError = (element) => ({
 const getAll = async () => {
   try {
     const { data } = await axios.get(baseUrl);
-    return { data };
+    return { persons: data.persons };
   } catch {
     return connectionError;
   }

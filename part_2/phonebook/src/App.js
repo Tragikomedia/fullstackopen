@@ -28,10 +28,10 @@ const App = () => {
   );
 
   const fetchContacts = useCallback(async () => {
-    const { data, error } = await db.getAll();
+    const { persons, error } = await db.getAll();
     if (error) return showError(error);
-    setPersons(data);
-    setVisiblePeople({ filter: "", list: data });
+    setPersons(persons);
+    setVisiblePeople({ filter: "", list: persons });
   }, [showError]);
 
   useEffect(() => {
