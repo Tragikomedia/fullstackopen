@@ -18,8 +18,11 @@ const getAll = async () => {
 const create = async (contact) => {
   try {
     const { data } = await axios.post(baseUrl, contact);
-    return { fullPerson: data };
-  } catch {
+    const { error } = data;
+    return { fullPerson: data, error };
+  } catch (error) {
+    const err = error?.response?.data;
+    if (err) return err;
     return connectionError;
   }
 };
@@ -45,7 +48,9 @@ const update = async (contact) => {
   try {
     const { data } = await axios.put(`${baseUrl}/${contact.id}`, contact);
     return { savedContact: data };
-  } catch {
+  } catch (error) {
+    const err = error?.response?.data;
+    if (err) return err;
     return notFoundError(contact.name);
   }
 };
