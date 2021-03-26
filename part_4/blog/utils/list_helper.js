@@ -8,6 +8,15 @@ const totalLikes = (blogs) => {
   return total;
 };
 
+const favoriteBlog = (blogs) => {
+  if (!blogs.length) return null;
+  const reducer = (top, curr) => (top.likes >= curr.likes ? top : curr);
+  const { title, author, likes } = blogs.reduce(reducer);
+  return { title, author, likes };
+};
+
 module.exports = {
-  dummy, totalLikes
+  dummy,
+  favoriteBlog,
+  totalLikes,
 };
