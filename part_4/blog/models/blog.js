@@ -26,4 +26,10 @@ blogSchema.set('toJSON', {
   },
 });
 
+blogSchema.statics.fromReq = function(req) {
+  const { title, author, url, likes } = req.body;
+  const newBlog = new this({ title, author, url, likes });
+  return newBlog;
+};
+
 module.exports = model('Blog', blogSchema);

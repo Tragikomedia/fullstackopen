@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Blog = require('../models/blog');
+const { updateObjFromReq } = require('../utils/update_helper');
 require('express-async-errors');
 
 router.get('/', async (req, res) => {
@@ -8,10 +9,20 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { title, author, url, likes } = req.body;
-  const newBlog = new Blog({ title, author, url, likes });
+  const newBlog = Blog.fromReq(req);
   await newBlog.save();
   res.status(201).json(newBlog);
+});
+
+router.put('/:id', async (req, res) => {
+  const id = req.params.id;
+  const updateObj = updateObjFromReq(req);
+  const updatedBlog = await Blog.findByIdAndUpdate(id, updateObj, {
+    new: true,
+    runValidators: true,
+  });
+  if (!updatedBlog) return res.status(404).end();
+  res.status(200).json(updatedBlog);
 });
 
 router.delete('/:id', async (req, res) => {

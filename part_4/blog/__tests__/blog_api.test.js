@@ -102,6 +102,91 @@ describe('POST /api/blogs', () => {
   });
 });
 
+describe('PUT /api/blogs/:id', () => {
+  it('Given all valid parameters, should successfully update the blog', async () => {
+    const params = {
+      title: 'Totally new title',
+      author: 'The author changed as well',
+      url: 'brandnewurl3.ru',
+      likes: 533,
+    };
+    const initialSavedBlogs = await helper.allSavedBlogs();
+    const blogToUpdate = initialSavedBlogs[0];
+    const res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(params);
+    expect(res.status).toBe(200);
+    const currentSavedBlogs = await helper.allSavedBlogs();
+    expect(currentSavedBlogs.length).toBe(helper.initialBlogs.length);
+    const savedBlogsData = currentSavedBlogs.map(
+      ({ title, author, url, likes }) => ({
+        title,
+        author,
+        url,
+        likes,
+      })
+    );
+    expect(savedBlogsData).toContainEqual(params);
+  });
+
+  it('Given all valid parameters, should send json with updated blog info', async () => {
+    const params = {
+      title: 'Mega new title',
+      author: 'The mega author changed as well',
+      url: 'branmegadnewurl3.ru',
+      likes: 642,
+    };
+    const initialSavedBlogs = await helper.allSavedBlogs();
+    const blogToUpdate = initialSavedBlogs[0];
+    const res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(params);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ...params, id: blogToUpdate.id });
+  });
+
+  it('Given some parameters, should successfully update and save blog', async () => {
+    const params = {
+      likes: 999,
+    };
+    const initialSavedBlogs = await helper.allSavedBlogs();
+    const blogToUpdate = initialSavedBlogs[0];
+    const res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(params);
+    expect(res.status).toBe(200);
+    const currentSavedBlogs = await helper.allSavedBlogs();
+    const savedBlogsData = currentSavedBlogs.map(
+      ({ title, author, url, likes }) => ({
+        title,
+        author,
+        url,
+        likes,
+      })
+    );
+    const { title, author, url } = blogToUpdate;
+    expect(savedBlogsData).toContainEqual({ title, author, url, ...params });
+  });
+
+  it('Given no parameters, should not change anything', async () => {
+    const initialSavedBlogs = await helper.allSavedBlogs();
+    const blogToUpdate = initialSavedBlogs[0];
+    const res = await api.put(`/api/blogs/${blogToUpdate.id}`);
+    expect(res.status).toBe(200);
+    const currentSavedBlogs = await helper.allSavedBlogs();
+    expect(currentSavedBlogs).toContainEqual(blogToUpdate);
+  });
+
+  it('Given valid id of a blog not in database, should return status 404', async () => {
+    const params = {
+      title: 'Mega new  cool title',
+      author: 'The mega cool author changed as well',
+      url: 'iijijiji.ru',
+      likes: 642,
+    };
+    const blog = new Blog(params);
+    await api.put(`/api/blogs/${blog.id}`).send({ likes: 2 }).expect(404);
+  });
+
+  it('Given malformatted id, should return status 400', async () => {
+    await api.put('/api/blogs/wrong').send({ likes: 2 }).expect(400);
+  });
+});
+
 describe('DELETE /api/blogs/:id', () => {
   it('Given a request with proper id of an existing blog, should remove the blog and return status 201', async () => {
     const initialBlogsInDb = await helper.allSavedBlogs();
@@ -116,7 +201,7 @@ describe('DELETE /api/blogs/:id', () => {
       title: 'TOREMOVE',
       author: 'Removed Author',
       url: 'notexisting.com',
-      likes: 404
+      likes: 404,
     });
     await api.delete(`/api/blogs/${blog.id}`).expect(204);
   });
