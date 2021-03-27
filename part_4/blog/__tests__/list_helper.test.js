@@ -132,3 +132,26 @@ describe('Most blogs', () => {
     expect(result).toEqual({ author: topAuthor, blogs: topAuthorBlogs.length });
   });
 });
+
+describe('Most liked author', () => {
+  it('Given an empty array, should return null', () => {
+    const blogs = [];
+    const result = listHelper.mostLikes(blogs);
+    expect(result).toBeNull();
+  });
+  it('Given an array with one blog, should return this blog\'s author and likes', () => {
+    const author = 'Cool Author';
+    const likes = 42;
+    const blog = new Blog({
+      title: 'Cool title',
+      author,
+      url: 'url.com',
+      likes,
+    });
+    const result = listHelper.mostLikes([blog]);
+    expect(result).toEqual({
+      author,
+      likes,
+    });
+  });
+});
