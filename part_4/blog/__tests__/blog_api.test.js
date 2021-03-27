@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const app = require('../app');
 const db = require('../utils/db');
 const helper = require('./helpers');
+const Blog = require('../models/blog');
 
 const api = supertest(app);
 
@@ -98,6 +99,30 @@ describe('POST /api/blogs', () => {
       likes: 43,
     };
     await api.post('/api/blogs').send(newBlog).expect(400);
+  });
+});
+
+describe('DELETE /api/blogs/:id', () => {
+  it('Given a request with proper id of an existing blog, should remove the blog and return status 201', async () => {
+    const initialBlogsInDb = await helper.allSavedBlogs();
+    const blogToRemove = initialBlogsInDb[0];
+    await api.delete(`/api/blogs/${blogToRemove.id}`).expect(204);
+    const currentBlogsInDb = await helper.allSavedBlogs();
+    expect(currentBlogsInDb).not.toContainEqual(blogToRemove);
+  });
+
+  it('Given a request with proper id of a blog not in db, should return status 201', async () => {
+    const blog = new Blog({
+      title: 'TOREMOVE',
+      author: 'Removed Author',
+      url: 'notexisting.com',
+      likes: 404
+    });
+    await api.delete(`/api/blogs/${blog.id}`).expect(204);
+  });
+
+  it('Given a request with malformed id, should return status 400', async () => {
+    await api.delete('/api/blogs/wrong').expect(400);
   });
 });
 
