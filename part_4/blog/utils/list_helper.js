@@ -40,7 +40,6 @@ const mostLikes = (blogs) => {
     Object.keys(authorsByLikes),
     (author) => authorsByLikes[author]
   );
-  console.log(mostLikedAuthor);
   return { author: mostLikedAuthor, likes: authorsByLikes[mostLikedAuthor] };
 };
 
