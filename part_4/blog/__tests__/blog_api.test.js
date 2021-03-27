@@ -67,6 +67,7 @@ describe('POST /api/blogs', () => {
     const { title, author, url, likes } = res.body;
     expect({ title, author, url, likes }).toEqual(newBlog);
   });
+
   it('Given a request with no likes set, should save the blog with likes set to 0', async () => {
     const newBlog = {
       title: 'NBlog',
@@ -75,8 +76,28 @@ describe('POST /api/blogs', () => {
     };
     await api.post('/api/blogs').send(newBlog);
     const blogsInDb = await helper.allSavedBlogs();
-    const savedBlog = blogsInDb.find(blog => blog.title === newBlog.title && blog.author === newBlog.author);
+    const savedBlog = blogsInDb.find(
+      (blog) => blog.title === newBlog.title && blog.author === newBlog.author
+    );
     expect(savedBlog.likes).toBe(0);
+  });
+
+  it('Given a request with no title set, should return res with status 400', async () => {
+    const newBlog = {
+      author: 'NAuthor',
+      url: 'brandn.com',
+      likes: 43,
+    };
+    await api.post('/api/blogs').send(newBlog).expect(400);
+  });
+
+  it('Given a request with no url set, should return res with status 400', async () => {
+    const newBlog = {
+      title: 'Some title',
+      author: 'NAuthor',
+      likes: 43,
+    };
+    await api.post('/api/blogs').send(newBlog).expect(400);
   });
 });
 
