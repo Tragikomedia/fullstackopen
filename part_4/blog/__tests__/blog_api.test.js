@@ -45,6 +45,7 @@ describe('POST /api/blogs', () => {
     const res = await api.post('/api/blogs').send(newBlog);
     expect(res.status).toBe(201);
     const blogsInDb = await helper.allSavedBlogs();
+    expect(blogsInDb.length).toBe(helper.initialBlogs.length + 1);
     const savedBlogs = blogsInDb.map(({ title, author, url, likes }) => ({
       title,
       author,
