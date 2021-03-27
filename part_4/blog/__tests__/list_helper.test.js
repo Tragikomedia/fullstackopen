@@ -90,3 +90,45 @@ describe('Favorite blog', () => {
     });
   });
 });
+
+describe('Most blogs', () => {
+  it('Given an empty array, should return null', () => {
+    const blogs = [];
+    const result = listHelper.mostBlogs(blogs);
+    expect(result).toBeNull();
+  });
+  it('Given an one-element array, should return info about this element', () => {
+    const author = 'Author';
+    const blog = new Blog({
+      title: 'Title',
+      author,
+      url: 'url.com',
+      likes: 57,
+    });
+    const result = listHelper.mostBlogs([blog]);
+    expect(result).toEqual({ author, blogs: 1 });
+  });
+  it('Given an array of blogs, should return an object with a number of blog of the author with most blogs', () => {
+    const topAuthor = 'TOP AUTHOR';
+    const topAuthorBlogs = [1, 2, 3].map(
+      (num) =>
+        new Blog({
+          title: `TopTitle${num}`,
+          author: topAuthor,
+          url: `url.com/${num}`,
+          likes: num,
+        })
+    );
+    const regularBlogs = [4, 5, 6, 7].map(
+      (num) =>
+        new Blog({
+          title: `Regular Blog ${num}`,
+          author: `Reg Author ${num}`,
+          url: `url.com${num}`,
+          likes: num,
+        })
+    );
+    const result = listHelper.mostBlogs([...regularBlogs, ...topAuthorBlogs]);
+    expect(result).toEqual({ author: topAuthor, blogs: topAuthorBlogs.length });
+  });
+});
