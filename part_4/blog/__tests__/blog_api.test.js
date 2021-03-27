@@ -52,8 +52,7 @@ describe('POST /api/blogs', () => {
       url,
       likes,
     }));
-    const { title, author, url, likes } = res.body;
-    expect(savedBlogs).toContainEqual({ title, author, url, likes });
+    expect(savedBlogs).toContainEqual(newBlog);
   });
 
   it('Given a proper request, should send the saved blog back as json', async () => {
@@ -67,6 +66,17 @@ describe('POST /api/blogs', () => {
     expect(res.status).toBe(201);
     const { title, author, url, likes } = res.body;
     expect({ title, author, url, likes }).toEqual(newBlog);
+  });
+  it('Given a request with no likes set, should save the blog with likes set to 0', async () => {
+    const newBlog = {
+      title: 'NBlog',
+      author: 'NAuthor',
+      url: 'brandn.com',
+    };
+    await api.post('/api/blogs').send(newBlog);
+    const blogsInDb = await helper.allSavedBlogs();
+    const savedBlog = blogsInDb.find(blog => blog.title === newBlog.title && blog.author === newBlog.author);
+    expect(savedBlog.likes).toBe(0);
   });
 });
 
