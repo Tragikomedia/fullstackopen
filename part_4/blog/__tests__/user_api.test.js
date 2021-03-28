@@ -71,6 +71,8 @@ describe('POST /api/users', () => {
     const res = await api.post('/api/users').send(userData);
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch('Username must be unique');
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 
   it('Given a request with missing password, should return status 400', async () => {
@@ -83,6 +85,8 @@ describe('POST /api/users', () => {
     expect(res.body.error).toMatch(
       'Username, name and password must be provided'
     );
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 
   it('Given a request with missing username, should return status 400', async () => {
@@ -95,6 +99,8 @@ describe('POST /api/users', () => {
     expect(res.body.error).toMatch(
       'Username, name and password must be provided'
     );
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 
   it('Given a request with missing name, should return status 400', async () => {
@@ -107,6 +113,8 @@ describe('POST /api/users', () => {
     expect(res.body.error).toMatch(
       'Username, name and password must be provided'
     );
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 
   it('Given a request with too short password, should return status 400', async () => {
@@ -120,6 +128,8 @@ describe('POST /api/users', () => {
     expect(res.body.error).toMatch(
       'Password must be at least 3 characters long'
     );
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 
   it('Given a request with too short username, should return status 400', async () => {
@@ -133,6 +143,8 @@ describe('POST /api/users', () => {
     expect(res.body.error).toMatch(
       'User validation failed: username: Username must be at least 3 characters long'
     );
+    const currentUsers = await helper.allSavedUsers();
+    expect(currentUsers.length).toBe(helper.initialUsers.length);
   });
 });
 
