@@ -1,5 +1,6 @@
 const { model, Schema } = require('mongoose');
 const User = require('./user');
+const { CustomError } = require('../utils/error');
 
 const blogSchema = new Schema({
   title: {
@@ -34,8 +35,9 @@ blogSchema.set('toJSON', {
 
 blogSchema.statics.fromReq = async function (req) {
   const { title, author, url, likes } = req.body;
-  const users = await User.find({});
-  const user = users[0]._id;
+  const {token} = req;
+  const user = await User.findFromToken(token);
+  if (!user) throw CustomError('ValidationError', 'Invalid user token');
   const newBlog = new this({ title, author, url, likes, user });
   return newBlog;
 };

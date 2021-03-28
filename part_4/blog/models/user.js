@@ -1,5 +1,5 @@
 const { model, Schema } = require('mongoose');
-const { hashPassword } = require('../utils/user_helper');
+const { decodeToken, hashPassword } = require('../utils/user_helper');
 const { CustomError } = require('../utils/error');
 const uniqueValidator = require('mongoose-unique-validator');
 
@@ -55,6 +55,12 @@ userSchema.statics.fromReq = async function (req) {
     name,
     passwordHash,
   });
+};
+
+userSchema.statics.findFromToken = async function (token) {
+  const { id } = decodeToken(token);
+  const user = await this.findById(id);
+  return user;
 };
 
 userSchema.statics.addBlog = async function (blog) {

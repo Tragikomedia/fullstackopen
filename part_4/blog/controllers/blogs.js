@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  if (!req.token) return res.status(401).json({error: 'Only authenticated users can post blogs'});
   const newBlog = await Blog.fromReq(req);
   await newBlog.save();
   await User.addBlog(newBlog);

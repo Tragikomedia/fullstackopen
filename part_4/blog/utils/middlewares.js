@@ -2,6 +2,13 @@ const logger = require('./logger');
 
 const unknownPath = (req, res) => res.status(404).end();
 
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('Authorization');
+  if (authorization && authorization.toLowerCase().startsWith('bearer'))
+    req.token = authorization.slice(7);
+  next();
+};
+
 const errorHandler = (error, req, res, next) => {
   logger.error(error);
   if (error.name) {
@@ -18,6 +25,12 @@ const errorHandler = (error, req, res, next) => {
     case 'CastError': {
       return res.status(400).json({ error: 'Malformatted id' });
     }
+    case 'JsonWebTokenError': {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    case 'TokenExpiredError': {
+      return res.status(401).json({ error: 'Token expired' });
+    }
     default: {
       return res.status(500).end();
     }
@@ -26,4 +39,4 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 
-module.exports = { errorHandler, unknownPath };
+module.exports = { errorHandler, unknownPath, tokenExtractor };
