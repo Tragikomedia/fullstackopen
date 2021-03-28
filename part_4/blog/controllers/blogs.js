@@ -5,12 +5,19 @@ const { updateObjFromReq } = require('../utils/update_helper');
 require('express-async-errors');
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.find({}).populate('user', {username: 1, name: 1, id: 1});
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1,
+    id: 1,
+  });
   res.json(blogs);
 });
 
 router.post('/', async (req, res) => {
-  if (!req.token) return res.status(401).json({error: 'Only authenticated users can post blogs'});
+  if (!req.user)
+    return res
+      .status(401)
+      .json({ error: 'Only authenticated users can post blogs' });
   const newBlog = await Blog.fromReq(req);
   await newBlog.save();
   await User.addBlog(newBlog);
@@ -29,8 +36,14 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized operation' });
   const id = req.params.id;
-  await Blog.findByIdAndRemove(id);
+  const blog = await Blog.findById(id);
+  if (blog) {
+    if (!(req.user._id.toString() === blog.user.toString()))
+      return res.status(401).json({ error: 'Unauthorized operation' });
+    await blog.remove();
+  }
   res.status(204).end();
 });
 

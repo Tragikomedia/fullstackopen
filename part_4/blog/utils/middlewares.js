@@ -1,11 +1,21 @@
+const User = require('../models/user');
 const logger = require('./logger');
+require('express-async-errors');
 
 const unknownPath = (req, res) => res.status(404).end();
 
-const tokenExtractor = (req, res, next) => {
+const tokenExtractor = (req) => {
   const authorization = req.get('Authorization');
   if (authorization && authorization.toLowerCase().startsWith('bearer'))
-    req.token = authorization.slice(7);
+    return authorization.slice(7);
+};
+
+const userExtractor = async (req, res, next) => {
+  const token = tokenExtractor(req);
+  if (token) {
+    const user = await User.findFromToken(token);
+    if (user) req.user = user;
+  }
   next();
 };
 
@@ -39,4 +49,4 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 
-module.exports = { errorHandler, unknownPath, tokenExtractor };
+module.exports = { errorHandler, unknownPath, userExtractor };
