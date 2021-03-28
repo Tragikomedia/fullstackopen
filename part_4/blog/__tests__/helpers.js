@@ -1,6 +1,12 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
+const fakeUser = {
+  username: 'Sth',
+  name: 'Something',
+  passwordHash: 'sth2345',
+};
+
 const initialBlogs = [
   {
     title: 'blog1',
@@ -20,24 +26,27 @@ const initialBlogs = [
     url: 'example3.com',
     likes: 23,
   },
-];
+].map((blog) => ({
+  ...blog,
+  user: new User(fakeUser),
+}));
 
 const initialUsers = [
   {
     username: 'eligood',
     name: 'Eliwood of Pherae',
-    passwordHash: 'royisourboy'
+    passwordHash: 'royisourboy',
   },
   {
     username: 'bartrearmads',
     name: 'Bartre the Brave',
-    passwordHash: 'nomagicallowed69'
+    passwordHash: 'nomagicallowed69',
   },
   {
     username: 'knightofCaelin',
     name: 'Kent',
-    passwordHash: 'totallynotSain2'
-  }
+    passwordHash: 'totallynotSain2',
+  },
 ];
 
 const emptyDb = async () => {
@@ -66,5 +75,5 @@ module.exports = {
   initialBlogs,
   initialUsers,
   saveInitialBlogs,
-  saveInitialUsers
+  saveInitialUsers,
 };

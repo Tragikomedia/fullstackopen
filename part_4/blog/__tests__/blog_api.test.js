@@ -12,6 +12,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await helper.emptyDb();
+  await helper.saveInitialUsers();
   await helper.saveInitialBlogs();
 });
 
