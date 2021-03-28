@@ -9,7 +9,7 @@ const errorHandler = (error, req, res, next) => {
     case 'ValidationError': {
       return res
         .status(400)
-        .json({ error: 'You must provide title and url.' });
+        .json({ error: error.message });
     }
     case 'CastError': {
       return res.status(400).json({ error: 'Malformatted id' });

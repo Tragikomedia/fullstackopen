@@ -1,4 +1,5 @@
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 const initialBlogs = [
   {
@@ -21,19 +22,49 @@ const initialBlogs = [
   },
 ];
 
-const emptyDb = async () => await Blog.deleteMany({});
+const initialUsers = [
+  {
+    username: 'eligood',
+    name: 'Eliwood of Pherae',
+    passwordHash: 'royisourboy'
+  },
+  {
+    username: 'bartrearmads',
+    name: 'Bartre the Brave',
+    passwordHash: 'nomagicallowed69'
+  },
+  {
+    username: 'knightofCaelin',
+    name: 'Kent',
+    passwordHash: 'totallynotSain2'
+  }
+];
 
-const saveInitialBlogs = async () => {
-  const blogs = initialBlogs.map((blog) => new Blog(blog));
-  const promiseArray = blogs.map((blog) => blog.save());
+const emptyDb = async () => {
+  await User.deleteMany({});
+  await Blog.deleteMany({});
+};
+
+const getSaving = (Struct, initials) => async () => {
+  const structs = initials.map((struct) => new Struct(struct));
+  const promiseArray = structs.map((struct) => struct.save());
   await Promise.all(promiseArray);
 };
 
-const allSavedBlogs = async () => await Blog.find({});
+const saveInitialBlogs = getSaving(Blog, initialBlogs);
+const saveInitialUsers = getSaving(User, initialUsers);
+
+const getAllSaved = (Struct) => async () => await Struct.find({});
+
+const allSavedBlogs = getAllSaved(Blog);
+const allSavedUsers = getAllSaved(User);
 
 module.exports = {
   allSavedBlogs,
+  allSavedUsers,
   emptyDb,
   initialBlogs,
+  initialUsers,
   saveInitialBlogs,
+  saveInitialUsers
 };
