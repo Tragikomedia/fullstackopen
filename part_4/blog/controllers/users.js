@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const newUser = await User.fromReq(req);
-  newUser.save();
+  await newUser.save();
   res.status(201).json(newUser);
 });
 

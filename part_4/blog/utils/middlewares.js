@@ -7,9 +7,13 @@ const errorHandler = (error, req, res, next) => {
   if (error.name) {
     switch (error.name) {
     case 'ValidationError': {
-      return res
-        .status(400)
-        .json({ error: error.message });
+      if (
+        error.message.startsWith(
+          'User validation failed: username: Error, expected `username` to be unique.'
+        )
+      )
+        error.message = 'Username must be unique';
+      return res.status(400).json({ error: error.message });
     }
     case 'CastError': {
       return res.status(400).json({ error: 'Malformatted id' });

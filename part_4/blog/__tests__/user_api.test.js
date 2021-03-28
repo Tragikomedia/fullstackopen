@@ -47,28 +47,92 @@ describe('POST /api/users', () => {
     });
   });
 
+  it('Given a request with proper data, should return the user info as json', async () => {
+    const userData = {
+      username: 'hctr1',
+      name: 'Hector of Ostia',
+      password: 'lilina1',
+    };
+    const res = await api.post('/api/users').send(userData);
+    const { username, name, id } = res.body;
+    expect({ username, name }).toEqual({
+      username: userData.username,
+      name: userData.name,
+    });
+    expect(id).toBeDefined;
+  });
+
+  it('Given a request with non-unique username, should return status 400', async () => {
+    const userData = {
+      username: helper.initialUsers[0].username,
+      name: 'Impostor',
+      password: 'hyehye33',
+    };
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch('Username must be unique');
+  });
+
   it('Given a request with missing password, should return status 400', async () => {
     const userData = {
       username: 'hctr1',
       name: 'Hector of Ostia',
     };
-    await api.post('/api/users').send(userData).expect(400);
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(
+      'Username, name and password must be provided'
+    );
   });
 
   it('Given a request with missing username, should return status 400', async () => {
     const userData = {
       name: 'Hector of Ostia',
-      password: 'lilina1'
+      password: 'lilina1',
     };
-    await api.post('/api/users').send(userData).expect(400);
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(
+      'Username, name and password must be provided'
+    );
   });
 
   it('Given a request with missing name, should return status 400', async () => {
     const userData = {
       username: 'hctr1',
-      password: 'lilina1'
+      password: 'lilina1',
     };
-    await api.post('/api/users').send(userData).expect(400);
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(
+      'Username, name and password must be provided'
+    );
+  });
+
+  it('Given a request with too short password, should return status 400', async () => {
+    const userData = {
+      username: 'hctr1',
+      name: 'Hector of Ostia',
+      password: 'l1',
+    };
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(
+      'Password must be at least 3 characters long'
+    );
+  });
+
+  it('Given a request with too short username, should return status 400', async () => {
+    const userData = {
+      username: 'h1',
+      name: 'Hector of Ostia',
+      password: 'lilina1',
+    };
+    const res = await api.post('/api/users').send(userData);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(
+      'User validation failed: username: Username must be at least 3 characters long'
+    );
   });
 });
 
