@@ -1,16 +1,18 @@
 const router = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 const { updateObjFromReq } = require('../utils/update_helper');
 require('express-async-errors');
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', {username: 1, name: 1, id: 1});
   res.json(blogs);
 });
 
 router.post('/', async (req, res) => {
-  const newBlog = Blog.fromReq(req);
+  const newBlog = await Blog.fromReq(req);
   await newBlog.save();
+  await User.addBlog(newBlog);
   res.status(201).json(newBlog);
 });
 

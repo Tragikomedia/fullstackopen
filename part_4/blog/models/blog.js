@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const User = require('./user');
 
 const blogSchema = new Schema({
   title: {
@@ -16,6 +17,11 @@ const blogSchema = new Schema({
     type: Number,
     default: 0,
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 blogSchema.set('toJSON', {
@@ -26,9 +32,11 @@ blogSchema.set('toJSON', {
   },
 });
 
-blogSchema.statics.fromReq = function(req) {
+blogSchema.statics.fromReq = async function (req) {
   const { title, author, url, likes } = req.body;
-  const newBlog = new this({ title, author, url, likes });
+  const users = await User.find({});
+  const user = users[0]._id;
+  const newBlog = new this({ title, author, url, likes, user });
   return newBlog;
 };
 

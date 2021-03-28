@@ -18,6 +18,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  blogs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Blog',
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);
@@ -49,6 +55,12 @@ userSchema.statics.fromReq = async function (req) {
     name,
     passwordHash,
   });
+};
+
+userSchema.statics.addBlog = async function (blog) {
+  const user = await this.findById(blog.user);
+  user.blogs = user.blogs.concat(blog._id);
+  await user.save();
 };
 
 module.exports = model('User', userSchema);
