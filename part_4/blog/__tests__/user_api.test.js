@@ -11,7 +11,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await helper.emptyDb();
-  await helper.saveInitialUsers();
+  await helper.initDbTestState();
 });
 
 describe('GET /api/users', () => {
@@ -29,6 +29,7 @@ describe('GET /api/users', () => {
 
 describe('POST /api/users', () => {
   it('Given a request with proper data, should save user to database', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       username: 'hctr1',
       name: 'Hector of Ostia',
@@ -36,7 +37,7 @@ describe('POST /api/users', () => {
     };
     await api.post('/api/users').send(userData).expect(201);
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length + 1);
+    expect(currentUsers.length).toBe(initialUsers.length + 1);
     const usersInfo = currentUsers.map((user) => ({
       username: user.username,
       name: user.name,
@@ -63,8 +64,9 @@ describe('POST /api/users', () => {
   });
 
   it('Given a request with non-unique username, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
-      username: helper.initialUsers[0].username,
+      username: initialUsers[0].username,
       name: 'Impostor',
       password: 'hyehye33',
     };
@@ -72,10 +74,11 @@ describe('POST /api/users', () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch('Username must be unique');
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 
   it('Given a request with missing password, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       username: 'hctr1',
       name: 'Hector of Ostia',
@@ -86,10 +89,11 @@ describe('POST /api/users', () => {
       'Username, name and password must be provided'
     );
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 
   it('Given a request with missing username, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       name: 'Hector of Ostia',
       password: 'lilina1',
@@ -100,10 +104,11 @@ describe('POST /api/users', () => {
       'Username, name and password must be provided'
     );
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 
   it('Given a request with missing name, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       username: 'hctr1',
       password: 'lilina1',
@@ -114,10 +119,11 @@ describe('POST /api/users', () => {
       'Username, name and password must be provided'
     );
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 
   it('Given a request with too short password, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       username: 'hctr1',
       name: 'Hector of Ostia',
@@ -129,10 +135,11 @@ describe('POST /api/users', () => {
       'Password must be at least 3 characters long'
     );
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 
   it('Given a request with too short username, should return status 400', async () => {
+    const initialUsers = await helper.allSavedUsers();
     const userData = {
       username: 'h1',
       name: 'Hector of Ostia',
@@ -144,7 +151,7 @@ describe('POST /api/users', () => {
       'User validation failed: username: Username must be at least 3 characters long'
     );
     const currentUsers = await helper.allSavedUsers();
-    expect(currentUsers.length).toBe(helper.initialUsers.length);
+    expect(currentUsers.length).toBe(initialUsers.length);
   });
 });
 

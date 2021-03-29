@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const { updateObjFromReq } = require('../utils/update_helper');
+const { unequalIds } = require('../utils/user_helper');
 require('express-async-errors');
 
 router.get('/', async (req, res) => {
@@ -25,22 +26,28 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
+  if (!req.user)
+    return res.status(401).json({ error: 'Unauthorized operation' });
   const id = req.params.id;
   const updateObj = updateObjFromReq(req);
+  const blogToUpdate = await Blog.findById(id);
+  if (!blogToUpdate) return res.status(404).end();
+  if (unequalIds(req.user._id, blogToUpdate.user))
+    return res.status(401).json({ error: 'Unauthorized operation' });
   const updatedBlog = await Blog.findByIdAndUpdate(id, updateObj, {
     new: true,
     runValidators: true,
   });
-  if (!updatedBlog) return res.status(404).end();
   res.status(200).json(updatedBlog);
 });
 
 router.delete('/:id', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Unauthorized operation' });
+  if (!req.user)
+    return res.status(401).json({ error: 'Unauthorized operation' });
   const id = req.params.id;
   const blog = await Blog.findById(id);
   if (blog) {
-    if (!(req.user._id.toString() === blog.user.toString()))
+    if (unequalIds(req.user._id, blog.user))
       return res.status(401).json({ error: 'Unauthorized operation' });
     await blog.remove();
   }
