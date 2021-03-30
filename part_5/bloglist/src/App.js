@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import InfoDisplay from "./components/InfoDisplay";
 import ErrorDisplay from "./components/ErrorDisplay";
 import blogService from "./services/blogs";
@@ -11,10 +11,19 @@ function App() {
   const [errorMessage, setErrorMessage] = useState("");
   const [infoMessage, setInfoMessage] = useState("");
 
+  useEffect(() => {
+    const savedUser = loginService.load();
+    if (savedUser) {
+      blogService.setToken(savedUser.token);
+      setUser(savedUser);
+    }
+  }, []);
+
   const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({ username, password });
       setUser(user);
+      loginService.save(user);
       blogService.setToken(user.token);
       setInfoMessage(`Successfully logged as ${user.name}`);
       setTimeout(() => setInfoMessage(""), 5000);
@@ -25,15 +34,26 @@ function App() {
     }
   };
 
+  const handleLogout = (event) => {
+    event.preventDefault();
+    loginService.clear();
+    blogService.setToken("");
+    setUser(null);
+  };
+
   return (
     <div className="App">
-      {user && <h3>Hello {user.name}</h3>}
       {user && (
-        <BlogPage>
-          {errorMessage && <ErrorDisplay message={errorMessage} />}
-          {infoMessage && <InfoDisplay message={infoMessage} />}
-        </BlogPage>
+        <>
+          <h3>Hello {user.name}</h3>
+          <button onClick={handleLogout}>Log out</button>
+          <BlogPage handleLogout={handleLogout}>
+            {errorMessage && <ErrorDisplay message={errorMessage} />}
+            {infoMessage && <InfoDisplay message={infoMessage} />}
+          </BlogPage>
+        </>
       )}
+
       {!user && (
         <LoginPage handleLogin={handleLogin}>
           {errorMessage && <ErrorDisplay message={errorMessage} />}
