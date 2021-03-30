@@ -41,13 +41,18 @@ function App() {
     setUser(null);
   };
 
+  const messaging = {
+    setErrorMessage,
+    setInfoMessage,
+  };
+
   return (
     <div className="App">
       {user && (
         <>
           <h3>Hello {user.name}</h3>
           <button onClick={handleLogout}>Log out</button>
-          <BlogPage handleLogout={handleLogout}>
+          <BlogPage messaging={messaging}>
             {errorMessage && <ErrorDisplay message={errorMessage} />}
             {infoMessage && <InfoDisplay message={infoMessage} />}
           </BlogPage>
