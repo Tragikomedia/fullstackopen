@@ -21,6 +21,7 @@ const BlogPage = ({ messaging, children }) => {
           );
         }
       })(),
+      // eslint-disable-next-line
     []
   );
 
