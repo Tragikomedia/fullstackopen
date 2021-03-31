@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import blogService from "../services/blogs";
-import Blog from "./Blog";
-import BlogForm from "./BlogForm";
-import Toggleable from "./Toggleable";
-import message from "../utils/messageHelper";
-import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from 'react';
+import blogService from '../services/blogs';
+import Blog from './Blog';
+import BlogForm from './BlogForm';
+import Toggleable from './Toggleable';
+import message from '../utils/messageHelper';
+import PropTypes from 'prop-types';
 
 const BlogPage = ({ messaging, children }) => {
   const [blogs, setBlogs] = useState([]);
@@ -18,11 +18,11 @@ const BlogPage = ({ messaging, children }) => {
         } catch {
           message.show(
             messaging.setErrorMessage,
-            "Blogs could not have been retrieved"
+            'Blogs could not have been retrieved'
           );
         }
       })(),
-      // eslint-disable-next-line
+    // eslint-disable-next-line
     []
   );
 
@@ -38,7 +38,7 @@ const BlogPage = ({ messaging, children }) => {
         `Blog ${blog.title} added successfully`
       );
     } catch (error) {
-      const msg = error?.response?.data?.error ?? "Something went wrong";
+      const msg = error?.response?.data?.error ?? 'Something went wrong';
       message.show(messaging.setErrorMessage, msg);
     }
   };
@@ -51,7 +51,7 @@ const BlogPage = ({ messaging, children }) => {
       );
       setBlogs(updatedBlogs);
     } catch {
-      message.show(messaging.setErrorMessage, "Could not like blog");
+      message.show(messaging.setErrorMessage, 'Could not like blog');
     }
   };
 
@@ -71,7 +71,7 @@ const BlogPage = ({ messaging, children }) => {
         `Successfully deleted ${blog.title}`
       );
     } catch {
-      message.show(messaging.setErrorMessage, "Could not delete blog");
+      message.show(messaging.setErrorMessage, 'Could not delete blog');
     }
   };
 
@@ -81,7 +81,7 @@ const BlogPage = ({ messaging, children }) => {
     <>
       <h2>Blogs</h2>
       {children}
-      <Toggleable label={"Add blog"} ref={createBlogRef}>
+      <Toggleable label={'Add blog'} ref={createBlogRef}>
         <BlogForm addBlog={addBlog} />
       </Toggleable>
       {sortedBlogs.map((blog) => (
@@ -99,9 +99,9 @@ const BlogPage = ({ messaging, children }) => {
 BlogPage.propTypes = {
   messaging: PropTypes.shape({
     setInfoMessage: PropTypes.func,
-    setErrorMessage: PropTypes.func
+    setErrorMessage: PropTypes.func,
   }),
-  children: PropTypes.array
-}
+  children: PropTypes.array,
+};
 
 export default BlogPage;

@@ -1,5 +1,5 @@
-import LoginForm from "./LoginForm";
-import PropTypes from "prop-types";
+import LoginForm from './LoginForm';
+import PropTypes from 'prop-types';
 
 const LoginPage = ({ handleLogin, children }) => {
   return (

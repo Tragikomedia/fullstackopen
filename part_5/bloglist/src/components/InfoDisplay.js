@@ -1,5 +1,5 @@
-import MessageDisplay from "./MessageDisplay";
+import MessageDisplay from './MessageDisplay';
 
-const InfoDisplay = ({message}) => MessageDisplay({type: 'info', message});
+const InfoDisplay = ({ message }) => MessageDisplay({ type: 'info', message });
 
 export default InfoDisplay;

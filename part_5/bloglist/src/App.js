@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import InfoDisplay from "./components/InfoDisplay";
-import ErrorDisplay from "./components/ErrorDisplay";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
-import LoginPage from "./components/LoginPage";
-import BlogPage from "./components/BlogPage";
-import message from "./utils/messageHelper";
+import { useState, useEffect } from 'react';
+import InfoDisplay from './components/InfoDisplay';
+import ErrorDisplay from './components/ErrorDisplay';
+import blogService from './services/blogs';
+import loginService from './services/login';
+import LoginPage from './components/LoginPage';
+import BlogPage from './components/BlogPage';
+import message from './utils/messageHelper';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [infoMessage, setInfoMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
 
   useEffect(() => {
     const savedUser = loginService.load();
@@ -28,7 +28,7 @@ function App() {
       blogService.setToken(user.token);
       message.show(setInfoMessage, `Successfully logged as ${user.name}`);
     } catch (error) {
-      const msg = error?.response?.data?.error ?? "Something went wrong";
+      const msg = error?.response?.data?.error ?? 'Something went wrong';
       message.show(setErrorMessage, msg);
     }
   };
@@ -36,7 +36,7 @@ function App() {
   const handleLogout = (event) => {
     event.preventDefault();
     loginService.clear();
-    blogService.setToken("");
+    blogService.setToken('');
     setUser(null);
   };
 
