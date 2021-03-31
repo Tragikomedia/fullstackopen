@@ -79,11 +79,13 @@ describe('POST /api/blogs', () => {
       .set('Authorization', helper.addToken(token))
       .send(newBlog);
     expect(res.status).toBe(201);
-    const { title, author, url, likes } = res.body;
-    expect({ title, author, url, likes, user: res.body.user }).toEqual({
-      ...newBlog,
-      user: user._id.toString(),
-    });
+    const { title, author, url, likes, } = res.body;
+    expect({ title, author, url, likes }).toEqual(newBlog);
+    const resUser = res.body.user;
+    expect(user.toString()).toBe(resUser.id);
+    expect(resUser.username).toBeDefined();
+    expect(resUser.name).toBeDefined();
+    expect(resUser.blogs.length).toBe(1);
   });
 
   it('Given a request with no likes set, should save the blog with likes set to 0', async () => {
@@ -280,13 +282,23 @@ describe('PUT /api/blogs/:id', () => {
       .expect(400);
   });
 
-  it('Given no token, should return status 401', async () => {
+  it('Given no token and change other than likes, should return status 401', async () => {
     const params = {
-      likes: 999,
+      author: 'Wrong Person',
+
     };
     const initialSavedBlogs = await helper.allSavedBlogs();
     const blogToUpdate = initialSavedBlogs[0];
     await api.put(`/api/blogs/${blogToUpdate.id}`).send(params).expect(401);
+  });
+
+  it('Given no token and likes change, should return status 200', async () => {
+    const params = {
+      likes: 669
+    };
+    const initialSavedBlogs = await helper.allSavedBlogs();
+    const blogToUpdate = initialSavedBlogs[0];
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send(params).expect(200);
   });
 
   it('Given a valid token of a different user, should return status 401', async () => {

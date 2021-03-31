@@ -22,22 +22,28 @@ router.post('/', async (req, res) => {
   const newBlog = await Blog.fromReq(req);
   await newBlog.save();
   await User.addBlog(newBlog);
-  res.status(201).json(newBlog);
+  const blogToReturn = await Blog.findById(newBlog.id).populate('user');
+  res.status(201).json(blogToReturn);
 });
 
 router.put('/:id', async (req, res) => {
-  if (!req.user)
+  const updateObj = updateObjFromReq(req);
+  const onlyLike = Object.keys(updateObj).length === 1 && updateObj?.likes;
+  if (!req.user && !onlyLike)
     return res.status(401).json({ error: 'Unauthorized operation' });
   const id = req.params.id;
-  const updateObj = updateObjFromReq(req);
   const blogToUpdate = await Blog.findById(id);
   if (!blogToUpdate) return res.status(404).end();
-  if (unequalIds(req.user._id, blogToUpdate.user))
+  if (!onlyLike && unequalIds(req.user._id, blogToUpdate.user))
     return res.status(401).json({ error: 'Unauthorized operation' });
   const updatedBlog = await Blog.findByIdAndUpdate(id, updateObj, {
     new: true,
     runValidators: true,
-  }).populate('user');
+  }).populate('user', {
+    username: 1,
+    name: 1,
+    id: 1,
+  });
   res.status(200).json(updatedBlog);
 });
 
