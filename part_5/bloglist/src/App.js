@@ -5,6 +5,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginPage from "./components/LoginPage";
 import BlogPage from "./components/BlogPage";
+import message from "./utils/messageHelper";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,12 +26,10 @@ function App() {
       setUser(user);
       loginService.save(user);
       blogService.setToken(user.token);
-      setInfoMessage(`Successfully logged as ${user.name}`);
-      setTimeout(() => setInfoMessage(""), 5000);
+      message.show(setInfoMessage, `Successfully logged as ${user.name}`);
     } catch (error) {
-      const message = error?.response?.data?.error;
-      setErrorMessage(message ?? "Something went wrong");
-      setTimeout(() => setErrorMessage(""), 5000);
+      const msg = error?.response?.data?.error ?? "Something went wrong";
+      message.show(setErrorMessage, msg);
     }
   };
 

@@ -1,0 +1,13 @@
+.error-display, .info-display {
+  padding: 0.5rem 0.2rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.error-display {
+  border-color: red;
+}
+
+.info-display {
+  border-color: green;
+}
