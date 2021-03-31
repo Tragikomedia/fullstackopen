@@ -21,7 +21,7 @@ const BlogPage = ({ messaging, children }) => {
           );
         }
       })(),
-    [messaging]
+    []
   );
 
   const createBlogRef = useRef();
@@ -49,7 +49,27 @@ const BlogPage = ({ messaging, children }) => {
       );
       setBlogs(updatedBlogs);
     } catch {
-      message.show(messaging.setErrorMessage, 'Could not like blog');
+      message.show(messaging.setErrorMessage, "Could not like blog");
+    }
+  };
+
+  const deleteBlog = async (blog) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${blog.title} by ${blog.author}?`
+      )
+    )
+      return;
+    try {
+      await blogService.del(blog);
+      const remainingBlogs = blogs.filter((remBlog) => remBlog.id !== blog.id);
+      setBlogs(remainingBlogs);
+      message.show(
+        messaging.setInfoMessage,
+        `Successfully deleted ${blog.title}`
+      );
+    } catch {
+      message.show(messaging.setErrorMessage, "Could not delete blog");
     }
   };
 
@@ -63,7 +83,12 @@ const BlogPage = ({ messaging, children }) => {
         <BlogForm addBlog={addBlog} />
       </Toggleable>
       {sortedBlogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          likeBlog={likeBlog}
+          deleteBlog={deleteBlog}
+        />
       ))}
     </>
   );

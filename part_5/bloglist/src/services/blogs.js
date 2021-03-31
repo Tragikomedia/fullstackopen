@@ -34,6 +34,14 @@ const like = async (blog) => {
   return res.data;
 };
 
-const toExport = { create, getAll, like, setToken };
+const del = async (blog) => {
+  await axios.delete(`${baseUrl}/${blog.id}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+};
+
+const toExport = { create, del, getAll, like, setToken };
 
 export default toExport;

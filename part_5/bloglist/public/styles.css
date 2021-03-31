@@ -20,3 +20,10 @@
 .blog ul {
   list-style: none;
 }
+
+.delete {
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
