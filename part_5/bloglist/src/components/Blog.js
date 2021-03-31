@@ -1,7 +1,11 @@
 import { useState } from "react";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const [expand, setExpand] = useState(false);
+
+const giveLike = () => {
+  likeBlog(blog);
+}
 
   return (
     <div className="blog">
@@ -15,7 +19,7 @@ const Blog = ({ blog }) => {
         {expand && (
           <>
             <li>{blog.url}</li>
-            <li>{`likes ${blog.likes}`} <button>Like</button></li>
+            <li>{`likes ${blog.likes}`} <button onClick={giveLike}>Like</button></li>
             <li>{blog.user.name}</li>
           </>
         )}

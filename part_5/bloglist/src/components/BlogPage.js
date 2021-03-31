@@ -41,15 +41,27 @@ const BlogPage = ({ messaging, children }) => {
     }
   };
 
+  const likeBlog = async (blog) => {
+    try {
+      const updatedBlog = await blogService.like(blog);
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id !== updatedBlog.id ? blog : updatedBlog
+      );
+      setBlogs(updatedBlogs);
+    } catch {
+      message.show(messaging.setErrorMessage, 'Could not like blog');
+    }
+  };
+
   return (
     <>
       <h2>Blogs</h2>
       {children}
-      <Toggleable label={'Add blog'} ref={createBlogRef}>
+      <Toggleable label={"Add blog"} ref={createBlogRef}>
         <BlogForm addBlog={addBlog} />
       </Toggleable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
       ))}
     </>
   );

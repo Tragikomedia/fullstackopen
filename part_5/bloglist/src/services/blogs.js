@@ -21,6 +21,19 @@ const create = async (blog) => {
   return res.data;
 };
 
-const toExport = { create, getAll, setToken };
+const like = async (blog) => {
+  const res = await axios.put(
+    `${baseUrl}/${blog.id}`,
+    { likes: blog.likes + 1 },
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+  return res.data;
+};
+
+const toExport = { create, getAll, like, setToken };
 
 export default toExport;
