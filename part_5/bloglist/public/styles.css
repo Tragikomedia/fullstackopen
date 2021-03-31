@@ -11,3 +11,12 @@
 .info-display {
   border-color: green;
 }
+
+.blog {
+  border: 1px solid black;
+  margin-bottom: 0.2rem;
+}
+
+.blog ul {
+  list-style: none;
+}
