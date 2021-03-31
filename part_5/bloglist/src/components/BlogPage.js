@@ -53,6 +53,8 @@ const BlogPage = ({ messaging, children }) => {
     }
   };
 
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+
   return (
     <>
       <h2>Blogs</h2>
@@ -60,7 +62,7 @@ const BlogPage = ({ messaging, children }) => {
       <Toggleable label={"Add blog"} ref={createBlogRef}>
         <BlogForm addBlog={addBlog} />
       </Toggleable>
-      {blogs.map((blog) => (
+      {sortedBlogs.map((blog) => (
         <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
       ))}
     </>
