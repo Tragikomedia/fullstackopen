@@ -4,6 +4,7 @@ import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import Toggleable from "./Toggleable";
 import message from "../utils/messageHelper";
+import PropTypes from "prop-types";
 
 const BlogPage = ({ messaging, children }) => {
   const [blogs, setBlogs] = useState([]);
@@ -94,5 +95,13 @@ const BlogPage = ({ messaging, children }) => {
     </>
   );
 };
+
+BlogPage.propTypes = {
+  messaging: PropTypes.shape({
+    setInfoMessage: PropTypes.func,
+    setErrorMessage: PropTypes.func
+  }),
+  children: PropTypes.array
+}
 
 export default BlogPage;

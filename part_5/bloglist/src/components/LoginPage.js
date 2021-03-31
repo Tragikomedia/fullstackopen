@@ -1,14 +1,19 @@
 import LoginForm from "./LoginForm";
+import PropTypes from "prop-types";
 
-const LoginPage = (props) => {
-  const {handleLogin, children} = props;
+const LoginPage = ({ handleLogin, children }) => {
   return (
     <>
-    <h2>Please log in to use the app</h2>
-    {children}
-    <LoginForm handleLogin={handleLogin} />
+      <h2>Please log in to use the app</h2>
+      {children}
+      <LoginForm handleLogin={handleLogin} />
     </>
   );
+};
+
+LoginPage.propTypes = {
+  handleLogin: PropTypes.func,
+  children: PropTypes.array,
 };
 
 export default LoginPage;
