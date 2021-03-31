@@ -16,10 +16,12 @@ describe('Blog', () => {
       id: 'abcdjfe',
     },
   };
-  const likeBlog = jest.fn();
-  const deleteBlog = jest.fn();
+  let likeBlog;
+  let deleteBlog;
 
   beforeEach(() => {
+    likeBlog = jest.fn();
+    deleteBlog = jest.fn();
     component = render(
       <Blog blog={blog} likeBlog={likeBlog} deleteBlog={deleteBlog} />
     );
@@ -45,5 +47,15 @@ describe('Blog', () => {
     expect(blogElt).toHaveTextContent(blog.likes);
     const buttons = component.container.querySelectorAll('button');
     expect(buttons.length).toBe(3);
+  });
+
+  it('Given the like button\'s been clicked twice, likeBlog function should register two calls and been passed the blog', () => {
+    const expandButton = component.container.querySelector('button');
+    fireEvent.click(expandButton);
+    const likeButton = component.getByText('Like');
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+    expect(likeBlog.mock.calls.length).toBe(2);
+    expect(likeBlog.mock.calls[0][0]).toEqual(blog);
   });
 });
