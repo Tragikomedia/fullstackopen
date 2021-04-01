@@ -17,14 +17,14 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
       <ul>
         <li>
           {blog.title} {blog.author}
-          <button onClick={() => setExpand(!expand)}>
+          <button onClick={() => setExpand(!expand)} data-cy='expandBtn'>
             {expand ? 'Hide' : 'Expand'}
           </button>
         </li>
         {expand && (
           <>
             <li>{blog.url}</li>
-            <li>
+            <li data-cy='likeLi'>
               {`likes ${blog.likes}`}{' '}
               <button onClick={giveLike} data-cy='likeBtn'>
                 Like

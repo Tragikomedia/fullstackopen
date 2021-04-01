@@ -104,7 +104,7 @@ describe('Blog app', function () {
         const newUser = {
           username: 'new user',
           name: 'New Userre',
-          password: '123hey'
+          password: '123hey',
         };
         cy.request('POST', backend + 'users', newUser);
         cy.login(newUser);
@@ -113,6 +113,35 @@ describe('Blog app', function () {
         cy.get('@blog').find('[data-cy=deleteBtn]').click();
         cy.contains('Could not delete blog');
         cy.contains(`${blog1.title} ${blog1.author}`);
+      });
+
+      it('Given a user gave out a few likes, the blogs should be ordered from the most to the least liked', function () {
+        cy.get('.blog > ul')
+          .find('[data-cy=expandBtn]')
+          .then((buttons) => {
+            buttons.map((index, button) => cy.get(button).click());
+          });
+        cy.contains(`${blog3.title} ${blog3.author}`)
+          .parent()
+          .find('[data-cy=likeBtn]')
+          .click();
+        cy.contains(`${blog2.title} ${blog2.author}`)
+          .parent()
+          .find('[data-cy=likeBtn]')
+          .click();
+        cy.contains(`${blog3.title} ${blog3.author}`)
+          .parent()
+          .find('[data-cy=likeBtn]')
+          .click();
+        const numRegExp = /\d+/;
+        cy.get('[data-cy=likeLi]').then((likeLis) => {
+          const [likes1, likes2, likes3] = likeLis.map((index, li) =>
+            parseInt(numRegExp.exec(li.textContent)[0])
+          );
+          expect(likes1).to.equal(2);
+          expect(likes2).to.equal(1);
+          expect(likes3).to.equal(0);
+        });
       });
     });
   });
