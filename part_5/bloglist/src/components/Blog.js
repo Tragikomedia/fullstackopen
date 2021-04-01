@@ -25,7 +25,10 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
           <>
             <li>{blog.url}</li>
             <li>
-              {`likes ${blog.likes}`} <button onClick={giveLike}>Like</button>
+              {`likes ${blog.likes}`}{' '}
+              <button onClick={giveLike} data-cy='likeBtn'>
+                Like
+              </button>
             </li>
             <li>{blog.user.name}</li>
             <li>

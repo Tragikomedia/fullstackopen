@@ -63,13 +63,13 @@ describe('Blog app', function () {
         cy.visit('/');
       });
 
-      it('Given logging in, should be able to see all three initial blogs', () => {
+      it('Given logging in, should be able to see all three initial blogs', function() {
         cy.contains(blog1.title);
         cy.contains(blog2.author);
         cy.contains(`${blog3.title} ${blog3.author}`);
       });
 
-      it('Given clicking Add blog button, should be able to send the note and not see the form', () => {
+      it('Given clicking Add blog button, should be able to send the note and not see the form', function(){
         const newBlog = {
           title: 'new blog',
           author: 'new author',
@@ -82,6 +82,14 @@ describe('Blog app', function () {
         cy.get('input[name=Url]').type(`${newBlog.url}{enter}`);
         cy.contains('Add blog');
         cy.contains(`${newBlog.title} ${newBlog.author}`);
+      });
+
+      it.only('Given liking a blog, its like count should increment', function () {
+        cy.contains(blog1.title).parent().as('blog');
+        cy.get('@blog').find('button').click();
+        cy.get('@blog').contains('likes 0');
+        cy.get('@blog').find('[data-cy=likeBtn]').click();
+        cy.get('@blog').contains('likes 1');
       });
     });
   });
