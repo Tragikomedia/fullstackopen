@@ -12,6 +12,7 @@ describe('Blog app', function () {
     cy.get('input[name=Password]').should('be.visible');
     cy.get('button[type=submit]').should('be.visible');
   });
+
   describe('Login', function () {
     let user;
     beforeEach(function () {
@@ -35,6 +36,53 @@ describe('Blog app', function () {
       cy.get('input[name=Password]').type('totallywrong{enter}');
       cy.get('h3').should('not.exist');
       cy.get('h2').should('not.contain', 'Blogs');
+    });
+
+    describe('Blogs', function () {
+      let blog1, blog2, blog3;
+      beforeEach(function () {
+        cy.login(user);
+        blog1 = {
+          title: 'title1',
+          author: 'author1',
+          url: 'url1.com',
+        };
+        blog2 = {
+          title: 'title2',
+          author: 'author2',
+          url: 'url2.com',
+        };
+        blog3 = {
+          title: 'title3',
+          author: 'author3',
+          url: 'url3.com',
+        };
+        cy.createBlog(blog1);
+        cy.createBlog(blog2);
+        cy.createBlog(blog3);
+        cy.visit('/');
+      });
+
+      it('Given logging in, should be able to see all three initial blogs', () => {
+        cy.contains(blog1.title);
+        cy.contains(blog2.author);
+        cy.contains(`${blog3.title} ${blog3.author}`);
+      });
+
+      it('Given clicking Add blog button, should be able to send the note and not see the form', () => {
+        const newBlog = {
+          title: 'new blog',
+          author: 'new author',
+          url: 'newurl.com',
+        };
+        cy.contains('Add blog').click();
+        cy.contains('cancel');
+        cy.get('input[name=Title]').type(newBlog.title);
+        cy.get('input[name=Author]').type(newBlog.author);
+        cy.get('input[name=Url]').type(`${newBlog.url}{enter}`);
+        cy.contains('Add blog');
+        cy.contains(`${newBlog.title} ${newBlog.author}`);
+      });
     });
   });
 });
