@@ -32,7 +32,7 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
             </li>
             <li>{blog.user.name}</li>
             <li>
-              <button className="delete" onClick={del}>
+              <button className="delete" onClick={del} data-cy='deleteBtn'>
                 Delete
               </button>
             </li>

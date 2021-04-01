@@ -63,13 +63,13 @@ describe('Blog app', function () {
         cy.visit('/');
       });
 
-      it('Given logging in, should be able to see all three initial blogs', function() {
+      it('Given logging in, should be able to see all three initial blogs', function () {
         cy.contains(blog1.title);
         cy.contains(blog2.author);
         cy.contains(`${blog3.title} ${blog3.author}`);
       });
 
-      it('Given clicking Add blog button, should be able to send the note and not see the form', function(){
+      it('Given clicking Add blog button, should be able to send the note and not see the form', function () {
         const newBlog = {
           title: 'new blog',
           author: 'new author',
@@ -84,12 +84,35 @@ describe('Blog app', function () {
         cy.contains(`${newBlog.title} ${newBlog.author}`);
       });
 
-      it.only('Given liking a blog, its like count should increment', function () {
+      it('Given liking a blog, its like count should increment', function () {
         cy.contains(blog1.title).parent().as('blog');
         cy.get('@blog').find('button').click();
         cy.get('@blog').contains('likes 0');
         cy.get('@blog').find('[data-cy=likeBtn]').click();
         cy.get('@blog').contains('likes 1');
+      });
+
+      it('Given a user created a blog, they should be able to delete it', function () {
+        cy.contains(`${blog1.title} ${blog1.author}`).parent().as('blog');
+        cy.get('@blog').find('button').click();
+        cy.get('@blog').find('[data-cy=deleteBtn]').click();
+        cy.contains(`Successfully deleted ${blog1.title}`);
+        cy.contains(`${blog1.title} ${blog1.author}`).should('not.exist');
+      });
+
+      it('Given a user did not create a blog, they should not be able to delete it', function () {
+        const newUser = {
+          username: 'new user',
+          name: 'New Userre',
+          password: '123hey'
+        };
+        cy.request('POST', backend + 'users', newUser);
+        cy.login(newUser);
+        cy.contains(`${blog1.title} ${blog1.author}`).parent().as('blog');
+        cy.get('@blog').find('button').click();
+        cy.get('@blog').find('[data-cy=deleteBtn]').click();
+        cy.contains('Could not delete blog');
+        cy.contains(`${blog1.title} ${blog1.author}`);
       });
     });
   });
