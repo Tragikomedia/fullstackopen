@@ -1,8 +1,9 @@
 import AnecdoteForm from "./AnecdoteForm";
 import testStore from "../store/store";
 import { Provider } from "react-redux";
-import * as redux from "react-redux";
+//import * as redux from "react-redux";
 import { render, fireEvent } from "@testing-library/react";
+// package must be mocked at the level where the important happens
 import axios from "axios";
 jest.mock('axios');
 const flushPromises = () => new Promise(setImmediate);
