@@ -7,10 +7,10 @@ const setNotification = (notification) => ({
 
 const removeNotification = () => setNotification("");
 
-export const showNotification = (notification, timeout = 5000) => {
+export const showNotification = (notification, timeout = 5) => {
   return dispatch => {
     dispatch(setNotification(notification));
-    setTimeout(() => dispatch(removeNotification()), timeout);
+    setTimeout(() => dispatch(removeNotification()), timeout * 1000);
   }
 };
 
