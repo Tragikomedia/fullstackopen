@@ -7,9 +7,11 @@ const setNotification = (notification) => ({
 
 const removeNotification = () => setNotification("");
 
-export const showNotification = (dispatch, notification) => {
-  dispatch(setNotification(notification));
-  setTimeout(() => dispatch(removeNotification()), 5000);
+export const showNotification = (notification, timeout = 5000) => {
+  return dispatch => {
+    dispatch(setNotification(notification));
+    setTimeout(() => dispatch(removeNotification()), timeout);
+  }
 };
 
 const reducer = (state = initialState, action) => {
