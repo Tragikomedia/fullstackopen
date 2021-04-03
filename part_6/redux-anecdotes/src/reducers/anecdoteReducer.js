@@ -2,7 +2,12 @@ import anecdotesService from "../services/anecdotes";
 
 const initialState = [];
 
-export const vote = (id) => ({ type: "VOTE", data: { id } });
+export const vote = (anecdote) => {
+  return async (dispatch) => {
+    await anecdotesService.vote(anecdote);
+    dispatch({ type: "VOTE", data: { id: anecdote.id } });
+  };
+};
 export const create = (content) => {
   return async (dispatch) => {
     const anecdote = await anecdotesService.save(content);

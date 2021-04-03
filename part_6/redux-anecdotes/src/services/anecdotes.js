@@ -10,10 +10,14 @@ const getAll = async () => {
 };
 
 const save = async (content) => {
-  const res = await axios.post(baseUrl, {content, id: genId(), votes: 0});
+  const res = await axios.post(baseUrl, { content, id: genId(), votes: 0 });
   return res.data;
 };
 
-const toExport = { getAll, save };
+const vote = async (anecdote) => {
+  await axios.patch(`${baseUrl}\\${anecdote.id}`, { votes: anecdote.votes + 1 });
+};
+
+const toExport = { getAll, save, vote };
 
 export default toExport;
