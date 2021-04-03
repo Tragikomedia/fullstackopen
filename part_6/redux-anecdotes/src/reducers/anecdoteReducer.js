@@ -3,7 +3,12 @@ import anecdotesService from "../services/anecdotes";
 const initialState = [];
 
 export const vote = (id) => ({ type: "VOTE", data: { id } });
-export const create = (anecdote) => ({ type: "CREATE", data: { anecdote } });
+export const create = (content) => {
+  return async (dispatch) => {
+    const anecdote = await anecdotesService.save(content);
+    dispatch({ type: "CREATE", data: { anecdote } });
+  };
+};
 export const init = () => {
   return async (dispatch) => {
     const anecdotes = await anecdotesService.getAll();
