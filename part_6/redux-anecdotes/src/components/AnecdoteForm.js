@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { create } from "../reducers/anecdoteReducer";
 import { showNotification } from "../reducers/notificationReducer";
 
-const AnecdoteForm = () => {
-  const dispatch = useDispatch();
+const AnecdoteForm = ({create, showNotification}) => {
   const [content, setContent] = useState("");
 
   const createAnecdote = async (event) => {
     event.preventDefault();
-    dispatch(create(content));
-    setContent('');
-    dispatch(showNotification(`Created note ${content}`));
+    create(content);
+    setContent("");
+    showNotification(`Created note ${content}`);
   };
 
   return (
@@ -32,4 +31,14 @@ const AnecdoteForm = () => {
   );
 };
 
-export default AnecdoteForm;
+const mapDispatchToProps = (dispatch) => ({
+  create: (value) => {
+    dispatch(create(value));
+  },
+  showNotification: (value) => {
+    dispatch(showNotification(value));
+  },
+});
+
+const ConnectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm);
+export default ConnectedAnecdoteForm;
