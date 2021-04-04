@@ -7,11 +7,17 @@ const setNotification = (notification) => ({
 
 const removeNotification = () => setNotification("");
 
+let curTimeout;
+
 export const showNotification = (notification, timeout = 5) => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(setNotification(notification));
-    setTimeout(() => dispatch(removeNotification()), timeout * 1000);
-  }
+    if (curTimeout) clearTimeout(curTimeout);
+    curTimeout = setTimeout(
+      () => dispatch(removeNotification()),
+      timeout * 1000
+    );
+  };
 };
 
 const reducer = (state = initialState, action) => {
