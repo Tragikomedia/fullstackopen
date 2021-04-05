@@ -7,6 +7,14 @@
     {
       "content": "the best featrure ever <3",
       "id": 2
+    },
+    {
+      "content": "Hello again",
+      "id": 3
+    },
+    {
+      "content": "Kuku",
+      "id": 4
     }
   ],
   "persons": [
@@ -19,6 +27,16 @@
       "name": "kaltsoon",
       "number": "045-2323456",
       "id": 2
+    },
+    {
+      "name": "Janne",
+      "number": "Ahonen",
+      "id": 3
+    },
+    {
+      "name": "Vainamoinen",
+      "number": "669-443-234",
+      "id": 4
     }
   ]
 }
