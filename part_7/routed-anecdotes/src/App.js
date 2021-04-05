@@ -4,7 +4,12 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import Menu from "./components/Menu";
 import CreateNew from "./components/CreateNew";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  useRouteMatch,
+} from "react-router-dom";
+import Anecdote from "./components/Anecdote";
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -44,10 +49,12 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
+  const match = useRouteMatch("/anecdotes/:id");
+  const anecdote = match ? anecdoteById(match.params.id) : null;
+
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
         <Menu />
         <Switch>
           <Route path="/about">
@@ -56,11 +63,13 @@ const App = () => {
           <Route path="/create">
             <CreateNew addNew={addNew} />
           </Route>
+          <Route path="/anecdotes/:id">
+            <Anecdote anecdote={anecdote} />
+          </Route>
           <Route path="/">
             <AnecdoteList anecdotes={anecdotes} />
           </Route>
         </Switch>
-      </Router>
       <Footer />
     </div>
   );
