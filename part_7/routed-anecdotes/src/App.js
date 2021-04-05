@@ -46,16 +46,16 @@ const App = () => {
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id);
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id);
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1,
-    };
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1,
+  //   };
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-  };
+  //   setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
+  // };
 
   const match = useRouteMatch("/anecdotes/:id");
   const anecdote = match ? anecdoteById(match.params.id) : null;
