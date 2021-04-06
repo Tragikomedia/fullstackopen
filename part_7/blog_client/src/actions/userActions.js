@@ -18,6 +18,7 @@ export const logIn = async (credentials) => {
 
 export const retrieve = () => {
   const user = loginService.load();
+  if (!user) return { type: 'NO_ACTION' };
   blogService.setToken(user.token);
   return { type: 'LOG_IN', data: { user } };
 };
