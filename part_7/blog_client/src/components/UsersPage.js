@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import notify from '../actions/notificationActions';
-import usersService from '../services/users';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { getAllUsers } from '../actions/usersActions';
 
 const UsersPage = ({ users, children }) => {
   return (
@@ -21,7 +22,9 @@ const UsersPage = ({ users, children }) => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}
@@ -37,15 +40,15 @@ UsersPage.propTypes = {
 };
 
 const UsersPageContainer = ({ children }) => {
-  const [users, setUsers] = useState([]);
+  const users = useSelector(({ users }) => users);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const users = await usersService.getAll();
-        setUsers(users);
+        const usersAction = await getAllUsers();
+        dispatch(usersAction);
       } catch {
         dispatch(notify('Could not fetch users\' data', 'error'));
       }

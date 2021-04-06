@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { del, like } from '../actions/blogActions';
 import notify from '../actions/notificationActions';
+import { Link } from 'react-router-dom';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, isStandalone }) => {
+  if (!blog) return null;
+
   const [expand, setExpand] = useState(false);
   const dispatch = useDispatch();
 
@@ -33,11 +36,31 @@ const Blog = ({ blog }) => {
     }
   };
 
-  return (
+  return isStandalone ? (
+    <>
+      <ul style={{ listStyle: 'none' }}>
+        <li>
+          <h3>
+            {blog.title} by {blog.author}
+          </h3>
+        </li>
+        <>
+          <li><a href={blog.url}>{blog.url}</a></li>
+          <li data-cy="likeLi">
+            {`likes ${blog.likes}`}{' '}
+            <button onClick={giveLike} data-cy="likeBtn">
+              Like
+            </button>
+          </li>
+          <li>added by {blog.user.name}</li>
+        </>
+      </ul>{' '}
+    </>
+  ) : (
     <div className="blog">
       <ul>
         <li>
-          {blog.title} {blog.author}
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
           <button onClick={() => setExpand(!expand)} data-cy="expandBtn">
             {expand ? 'Hide' : 'Expand'}
           </button>
@@ -74,6 +97,10 @@ Blog.propTypes = {
   }),
   likeBlog: PropTypes.func,
   deleteBlog: PropTypes.func,
+};
+
+Blog.defaultProps = {
+  isStandalone: false,
 };
 
 export default Blog;
