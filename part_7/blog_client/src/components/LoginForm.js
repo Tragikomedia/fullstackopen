@@ -1,15 +1,33 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { logIn } from '../actions/userActions';
+import { useDispatch } from 'react-redux';
+import notify from '../actions/notificationActions';
 
-const LoginForm = ({ handleLogin }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    handleLogin({ username, password });
+  const dispatch = useDispatch();
+
+  const resetFields = () => {
     setUsername('');
     setPassword('');
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const loginAction = await logIn({ username, password });
+      dispatch(loginAction);
+      dispatch(
+        notify(`Successfully logged as ${loginAction.data.user.name}`, 'info')
+      );
+      resetFields();
+    } catch (error) {
+      const msg = error?.response?.data?.error ?? 'Something went wrong';
+      dispatch(notify(msg, 'error'));
+    }
   };
 
   return (
