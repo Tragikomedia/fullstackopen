@@ -6,9 +6,14 @@ const removeNotification = () => {
   return { type: 'SHOW_NOTIFICATION', data: { message: '', type: 'none' } };
 };
 
-const notify = async (message, type, timeout = 5) => (dispatch) => {
+let currentTimeout;
+
+const notify = (message, type, timeout = 5) => (dispatch) => {
   dispatch(showNotification(message, type));
-  setTimeout(() => removeNotification(), timeout * 1000);
+  if (currentTimeout) clearTimeout(currentTimeout);
+  currentTimeout = setTimeout(() => {
+    dispatch(removeNotification());
+  }, timeout * 1000);
 };
 
 export default notify;

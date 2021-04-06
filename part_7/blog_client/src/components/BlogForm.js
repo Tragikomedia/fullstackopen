@@ -1,18 +1,34 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { create } from '../actions/blogActions';
+import notify from '../actions/notificationActions';
 
-const BlogForm = ({ addBlog }) => {
+const BlogForm = ({ toggleVisibility }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    const blog = { title, author, url };
-    addBlog(blog);
+  const dispatch = useDispatch();
+  const resetFields = () => {
     setTitle('');
     setAuthor('');
     setUrl('');
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const blog = { title, author, url };
+    try {
+      const createAction = await create(blog);
+      dispatch(createAction);
+      dispatch(notify(`Blog ${blog.title} added successfully`, 'info'));
+      resetFields();
+      toggleVisibility();
+    } catch (error) {
+      const msg = error?.response?.data?.error ?? 'Something went wrong';
+      dispatch(notify(msg, 'error'));
+    }
   };
 
   return (

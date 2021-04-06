@@ -1,24 +1,19 @@
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Toggleable = forwardRef(({ children, label }, ref) => {
+const Toggleable = ({ children, label }) => {
   const [visible, setVisible] = useState(false);
 
   const toggleVisibility = () => setVisible(!visible);
-
-  useImperativeHandle(ref, () => ({
-    toggleVisibility,
-  }));
+  const augmentedChildren = React.cloneElement(children, { toggleVisibility });
 
   return (
     <>
-      {visible && children}
+      {visible && augmentedChildren}
       <button onClick={toggleVisibility}>{visible ? 'cancel' : label}</button>
     </>
   );
-});
-
-Toggleable.displayName = 'Toggleable';
+};
 
 Toggleable.propTypes = {
   label: PropTypes.string,

@@ -13,7 +13,7 @@ const LoginPage = ({ handleLogin, children }) => {
 
 LoginPage.propTypes = {
   handleLogin: PropTypes.func,
-  children: PropTypes.array,
+  children: PropTypes.object,
 };
 
 export default LoginPage;

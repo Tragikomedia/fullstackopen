@@ -1,15 +1,36 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { del, like } from '../actions/blogActions';
+import notify from '../actions/notificationActions';
 
-const Blog = ({ blog, likeBlog, deleteBlog }) => {
+const Blog = ({ blog }) => {
   const [expand, setExpand] = useState(false);
+  const dispatch = useDispatch();
 
-  const giveLike = () => {
-    likeBlog(blog);
+  const giveLike = async () => {
+    try {
+      const likeAction = await like(blog);
+      dispatch(likeAction);
+    } catch (error) {
+      dispatch(notify('Could not like blog', 'error'));
+    }
   };
 
-  const del = () => {
-    deleteBlog(blog);
+  const delBlog = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${blog.title} by ${blog.author}?`
+      )
+    )
+      return;
+    try {
+      const delAction = await del(blog);
+      dispatch(delAction);
+      dispatch(notify(`Successfully deleted blog ${blog.title}`, 'info'));
+    } catch (error) {
+      dispatch(notify('Could not delete blog', 'error'));
+    }
   };
 
   return (
@@ -17,22 +38,22 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
       <ul>
         <li>
           {blog.title} {blog.author}
-          <button onClick={() => setExpand(!expand)} data-cy='expandBtn'>
+          <button onClick={() => setExpand(!expand)} data-cy="expandBtn">
             {expand ? 'Hide' : 'Expand'}
           </button>
         </li>
         {expand && (
           <>
             <li>{blog.url}</li>
-            <li data-cy='likeLi'>
+            <li data-cy="likeLi">
               {`likes ${blog.likes}`}{' '}
-              <button onClick={giveLike} data-cy='likeBtn'>
+              <button onClick={giveLike} data-cy="likeBtn">
                 Like
               </button>
             </li>
             <li>{blog.user.name}</li>
             <li>
-              <button className="delete" onClick={del} data-cy='deleteBtn'>
+              <button className="delete" onClick={delBlog} data-cy="deleteBtn">
                 Delete
               </button>
             </li>

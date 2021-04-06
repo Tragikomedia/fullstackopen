@@ -13,7 +13,10 @@ MessageDisplay.propTypes = {
 };
 
 const MessageDisplayContainer = () => {
-  const [type, message] = useSelector(({ type, message }) => [type, message]);
+  const [type, message] = useSelector(({ notification }) => [
+    notification.type,
+    notification.message,
+  ]);
 
   if (type === 'none') return null;
 
