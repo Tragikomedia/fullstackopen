@@ -1,0 +1,29 @@
+.error-display, .info-display {
+  padding: 0.5rem 0.2rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.error-display {
+  border-color: red;
+}
+
+.info-display {
+  border-color: green;
+}
+
+.blog {
+  border: 1px solid black;
+  margin-bottom: 0.2rem;
+}
+
+.blog ul {
+  list-style: none;
+}
+
+.delete {
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
