@@ -26,8 +26,7 @@ const BlogForm = ({ toggleVisibility }) => {
       resetFields();
       toggleVisibility();
     } catch (error) {
-      const msg = error?.response?.data?.error ?? 'Something went wrong';
-      dispatch(notify(msg, 'error'));
+      dispatch(notify('Could not create blog', 'error'));
     }
   };
 
