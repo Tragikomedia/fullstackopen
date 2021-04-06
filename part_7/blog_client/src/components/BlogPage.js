@@ -3,11 +3,14 @@ import blogService from '../services/blogs';
 import Blog from './Blog';
 import BlogForm from './BlogForm';
 import Toggleable from './Toggleable';
-import message from '../utils/messageHelper';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import notify from '../actions/notificationActions';
 
-const BlogPage = ({ messaging, children }) => {
+const BlogPage = ({ children }) => {
   const [blogs, setBlogs] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(
     () =>
@@ -16,10 +19,7 @@ const BlogPage = ({ messaging, children }) => {
           const dbBlogs = await blogService.getAll();
           setBlogs(dbBlogs);
         } catch {
-          message.show(
-            messaging.setErrorMessage,
-            'Blogs could not have been retrieved'
-          );
+          dispatch(notify('Blogs could not have been retrieved', 'error'));
         }
       })(),
     // eslint-disable-next-line
@@ -33,13 +33,10 @@ const BlogPage = ({ messaging, children }) => {
       const blog = await blogService.create(blogData);
       setBlogs(blogs.concat(blog));
       createBlogRef.current.toggleVisibility();
-      message.show(
-        messaging.setInfoMessage,
-        `Blog ${blog.title} added successfully`
-      );
+      dispatch(notify(`Blog ${blog.title} added successfully`, 'info'));
     } catch (error) {
       const msg = error?.response?.data?.error ?? 'Something went wrong';
-      message.show(messaging.setErrorMessage, msg);
+      dispatch(notify(msg, 'error'));
     }
   };
 
@@ -51,7 +48,7 @@ const BlogPage = ({ messaging, children }) => {
       );
       setBlogs(updatedBlogs);
     } catch {
-      message.show(messaging.setErrorMessage, 'Could not like blog');
+      dispatch(notify('Could not like blog', 'error'));
     }
   };
 
@@ -66,12 +63,9 @@ const BlogPage = ({ messaging, children }) => {
       await blogService.del(blog);
       const remainingBlogs = blogs.filter((remBlog) => remBlog.id !== blog.id);
       setBlogs(remainingBlogs);
-      message.show(
-        messaging.setInfoMessage,
-        `Successfully deleted ${blog.title}`
-      );
+      dispatch(notify(`Successfully deleted ${blog.title}`, 'info'));
     } catch {
-      message.show(messaging.setErrorMessage, 'Could not delete blog');
+      dispatch(notify('Could not delete blog', 'error'));
     }
   };
 
@@ -97,10 +91,6 @@ const BlogPage = ({ messaging, children }) => {
 };
 
 BlogPage.propTypes = {
-  messaging: PropTypes.shape({
-    setInfoMessage: PropTypes.func,
-    setErrorMessage: PropTypes.func,
-  }),
   children: PropTypes.array,
 };
 

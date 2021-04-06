@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import InfoDisplay from './components/InfoDisplay';
-import ErrorDisplay from './components/ErrorDisplay';
+import MessageDisplay from './components/MessageDisplay';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginPage from './components/LoginPage';
 import BlogPage from './components/BlogPage';
-import message from './utils/messageHelper';
+import { useDispatch } from 'react-redux';
+import notify from './actions/notificationActions';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [infoMessage, setInfoMessage] = useState('');
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const savedUser = loginService.load();
@@ -26,10 +26,10 @@ function App() {
       setUser(user);
       loginService.save(user);
       blogService.setToken(user.token);
-      message.show(setInfoMessage, `Successfully logged as ${user.name}`);
+      dispatch(notify(`Successfully logged as ${user.name}`, 'info'));
     } catch (error) {
       const msg = error?.response?.data?.error ?? 'Something went wrong';
-      message.show(setErrorMessage, msg);
+      dispatch(notify(msg, 'error'));
     }
   };
 
@@ -40,28 +40,21 @@ function App() {
     setUser(null);
   };
 
-  const messaging = {
-    setErrorMessage,
-    setInfoMessage,
-  };
-
   return (
     <div className="App">
       {user && (
         <>
           <h3>Hello {user.name}</h3>
           <button onClick={handleLogout}>Log out</button>
-          <BlogPage messaging={messaging}>
-            {errorMessage && <ErrorDisplay message={errorMessage} />}
-            {infoMessage && <InfoDisplay message={infoMessage} />}
+          <BlogPage>
+            <MessageDisplay />
           </BlogPage>
         </>
       )}
 
       {!user && (
         <LoginPage handleLogin={handleLogin}>
-          {errorMessage && <ErrorDisplay message={errorMessage} />}
-          {infoMessage && <InfoDisplay message={infoMessage} />}
+          <MessageDisplay />
         </LoginPage>
       )}
     </div>

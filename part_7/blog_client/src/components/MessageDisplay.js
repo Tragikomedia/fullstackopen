@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 const MessageDisplay = ({ type, message }) => (
   <div className={`${type}-display`}>
@@ -11,4 +12,16 @@ MessageDisplay.propTypes = {
   message: PropTypes.string,
 };
 
-export default MessageDisplay;
+const MessageDisplayContainer = () => {
+  const [type, message] = useSelector(({ type, message }) => [type, message]);
+
+  if (type === 'none') return null;
+
+  return (
+    <>
+      <MessageDisplay type={type} message={message} />{' '}
+    </>
+  );
+};
+
+export default MessageDisplayContainer;
