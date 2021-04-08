@@ -1,3 +1,9 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 .error-display, .info-display {
   padding: 0.5rem 0.2rem;
   border-width: 1px;
@@ -26,4 +32,8 @@
   border: none;
   color: white;
   cursor: pointer;
+}
+
+body {
+  background-color: black;
 }

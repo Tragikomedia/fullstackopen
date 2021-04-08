@@ -1,26 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logOut } from '../actions/userActions';
+import { Nav, Ul, NavLi } from './Styled';
 
 const Menu = ({ menuItems }) => {
   return (
     <>
-      <nav style={{ backgroundColor: 'orange' }}>
-        <ul
-          style={{
-            listStyle: 'none',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
+      <Nav>
+        <Ul>
           {menuItems.map((item, index) => (
-            <li style={{ paddingRight: '0.5rem' }} key={index}>
-              {item}
-            </li>
+            <NavLi key={index}>{item}</NavLi>
           ))}
-        </ul>
-      </nav>
+        </Ul>
+      </Nav>
     </>
   );
 };
@@ -38,7 +30,7 @@ const MenuContainer = () => {
   const usersLink = <Link to="/users">users</Link>;
   const loginBar = user ? (
     <>
-      <h3 style={{ display: 'inline-block' }}>Hello {user.name}</h3>
+      <h3>Hello {user.name}</h3>
       <button onClick={handleLogout}>Log out</button>
     </>
   ) : null;

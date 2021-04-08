@@ -4,6 +4,7 @@ import { del, like } from '../actions/blogActions';
 import notify from '../actions/notificationActions';
 import { Link, useHistory } from 'react-router-dom';
 import CommentField from './CommentField';
+import { InfoList } from './Styled';
 
 const Blog = ({ blog, isStandalone }) => {
   if (!blog) return null;
@@ -38,7 +39,7 @@ const Blog = ({ blog, isStandalone }) => {
 
   return isStandalone ? (
     <>
-      <ul style={{ listStyle: 'none' }}>
+      <InfoList>
         <li>
           <h3>
             {blog.title} by {blog.author}
@@ -61,14 +62,16 @@ const Blog = ({ blog, isStandalone }) => {
             </button>
           </li>
         </>
-      </ul>
+      </InfoList>
       <div>
         <h3>Comments</h3>
         <CommentField blog={blog} />
         <ul>
-          {blog.comments.length ? blog.comments.map((comment, index) => (
-            <li key={`${index}+${comment}`}>{comment}</li>
-          )) : 'No comments'}
+          {blog.comments.length
+            ? blog.comments.map((comment, index) => (
+              <li key={`${index}+${comment}`}>{comment}</li>
+            ))
+            : 'No comments'}
         </ul>
       </div>
     </>

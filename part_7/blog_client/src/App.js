@@ -9,6 +9,8 @@ import UsersPage from './components/UsersPage';
 import UserPage from './components/UserPage';
 import Blog from './components/Blog';
 import Menu from './components/Menu';
+import { StyledApp } from './components/Styled';
+
 function App() {
   const user = useSelector(({ user }) => user);
   const users = useSelector(({ users }) => users);
@@ -36,8 +38,8 @@ function App() {
   const blogById = blogFromMatch(blogMatch);
 
   return (
-    <div className="App">
-      <Menu/>
+    <StyledApp className={'App'}>
+      <Menu />
       <Switch>
         <Route path="/login">
           {!user ? (
@@ -74,7 +76,7 @@ function App() {
           )}
         </Route>
       </Switch>
-    </div>
+    </StyledApp>
   );
 }
 
