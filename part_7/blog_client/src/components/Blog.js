@@ -62,6 +62,14 @@ const Blog = ({ blog, isStandalone }) => {
           </li>
         </>
       </ul>
+      <div>
+        <h3>Comments</h3>
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+      </div>
     </>
   ) : (
     <div className="blog">
