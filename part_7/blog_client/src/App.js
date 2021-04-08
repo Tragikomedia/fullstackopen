@@ -3,11 +3,12 @@ import MessageDisplay from './components/MessageDisplay';
 import LoginPage from './components/LoginPage';
 import BlogPage from './components/BlogPage';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut, retrieve } from './actions/userActions';
+import { retrieve } from './actions/userActions';
 import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
 import UsersPage from './components/UsersPage';
 import UserPage from './components/UserPage';
 import Blog from './components/Blog';
+import Menu from './components/Menu';
 function App() {
   const user = useSelector(({ user }) => user);
   const users = useSelector(({ users }) => users);
@@ -17,11 +18,6 @@ function App() {
   useEffect(() => {
     dispatch(retrieve());
   }, []);
-
-  const handleLogout = (event) => {
-    event.preventDefault();
-    dispatch(logOut());
-  };
 
   const userMatch = useRouteMatch('/users/:id');
   const userFromMatch = (match) => {
@@ -41,12 +37,7 @@ function App() {
 
   return (
     <div className="App">
-      {user && (
-        <>
-          <h3>Hello {user.name}</h3>
-          <button onClick={handleLogout}>Log out</button>
-        </>
-      )}
+      <Menu/>
       <Switch>
         <Route path="/login">
           {!user ? (
