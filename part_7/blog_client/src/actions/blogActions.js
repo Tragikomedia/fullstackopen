@@ -19,3 +19,8 @@ export const like = async (blog) => {
   const updatedBlog = await blogService.like(blog);
   return { type: 'VOTE_BLOG', data: { blog: updatedBlog } };
 };
+
+export const addComment = async (blog, comment) => {
+  const updatedBlog = await blogService.comment(blog, comment);
+  return { type: 'COMMENT_BLOG', data: { blog: updatedBlog } };
+};

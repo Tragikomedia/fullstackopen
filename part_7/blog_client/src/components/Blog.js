@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux';
 import { del, like } from '../actions/blogActions';
 import notify from '../actions/notificationActions';
 import { Link, useHistory } from 'react-router-dom';
+import CommentField from './CommentField';
 
 const Blog = ({ blog, isStandalone }) => {
   if (!blog) return null;
-
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -64,10 +64,11 @@ const Blog = ({ blog, isStandalone }) => {
       </ul>
       <div>
         <h3>Comments</h3>
+        <CommentField blog={blog} />
         <ul>
-          {blog.comments.map((comment, index) => (
-            <li key={index}>{comment}</li>
-          ))}
+          {blog.comments.length ? blog.comments.map((comment, index) => (
+            <li key={`${index}+${comment}`}>{comment}</li>
+          )) : 'No comments'}
         </ul>
       </div>
     </>

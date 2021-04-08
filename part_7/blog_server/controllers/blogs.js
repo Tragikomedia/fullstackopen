@@ -27,13 +27,13 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/:id/comments', async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const blog = await Blog.findById(id);
   if (!blog) return res.status(404).end();
-  const {comment} = req.body;
+  const { comment } = req.body;
   blog.comments.push(comment);
   await blog.save();
-  res.status(200).json({blog});
+  res.status(200).json(blog);
 });
 
 router.put('/:id', async (req, res) => {

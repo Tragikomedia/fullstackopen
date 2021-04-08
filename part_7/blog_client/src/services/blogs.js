@@ -39,6 +39,19 @@ const like = async (blog) => {
   return res.data;
 };
 
+const comment = async (blog, comment) => {
+  const res = await axios.post(
+    `${baseUrl}/${blog.id}/comments`,
+    { comment },
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+  return res.data;
+};
+
 const del = async (blog) => {
   await axios.delete(`${baseUrl}/${blog.id}`, {
     headers: {
@@ -47,6 +60,6 @@ const del = async (blog) => {
   });
 };
 
-const toExport = { create, clearToken, del, getAll, like, setToken };
+const toExport = { create, comment, clearToken, del, getAll, like, setToken };
 
 export default toExport;
