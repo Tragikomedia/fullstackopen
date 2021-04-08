@@ -1,15 +1,14 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { del, like } from '../actions/blogActions';
 import notify from '../actions/notificationActions';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const Blog = ({ blog, isStandalone }) => {
   if (!blog) return null;
 
-  const [expand, setExpand] = useState(false);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const giveLike = async () => {
     try {
@@ -31,6 +30,7 @@ const Blog = ({ blog, isStandalone }) => {
       const delAction = await del(blog);
       dispatch(delAction);
       dispatch(notify(`Successfully deleted blog ${blog.title}`, 'info'));
+      history.push('/');
     } catch (error) {
       dispatch(notify('Could not delete blog', 'error'));
     }
@@ -45,43 +45,30 @@ const Blog = ({ blog, isStandalone }) => {
           </h3>
         </li>
         <>
-          <li><a href={blog.url}>{blog.url}</a></li>
+          <li>
+            <a href={blog.url}>{blog.url}</a>
+          </li>
           <li data-cy="likeLi">
-            {`likes ${blog.likes}`}{' '}
+            {`likes ${blog.likes}`}
             <button onClick={giveLike} data-cy="likeBtn">
               Like
             </button>
           </li>
           <li>added by {blog.user.name}</li>
+          <li>
+            <button className="delete" onClick={delBlog} data-cy="deleteBtn">
+              Delete
+            </button>
+          </li>
         </>
-      </ul>{' '}
+      </ul>
     </>
   ) : (
     <div className="blog">
       <ul>
         <li>
           <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
-          <button onClick={() => setExpand(!expand)} data-cy="expandBtn">
-            {expand ? 'Hide' : 'Expand'}
-          </button>
         </li>
-        {expand && (
-          <>
-            <li>{blog.url}</li>
-            <li data-cy="likeLi">
-              {`likes ${blog.likes}`}{' '}
-              <button onClick={giveLike} data-cy="likeBtn">
-                Like
-              </button>
-            </li>
-            <li>{blog.user.name}</li>
-            <li>
-              <button className="delete" onClick={delBlog} data-cy="deleteBtn">
-                Delete
-              </button>
-            </li>
-          </>
-        )}
       </ul>
     </div>
   );
