@@ -1,14 +1,15 @@
-import { ALL_AUTHORS } from '../data/authors/query';
-import { useQuery } from '@apollo/client'
-import React from 'react'
+import { ALL_AUTHORS } from "../data/authors/query";
+import { useQuery } from "@apollo/client";
+import React from "react";
+import SetAuthorBirthYear from "./SetAuthorBirthYear";
 
 const Authors = (props) => {
-  const {loading, data, error} = useQuery(ALL_AUTHORS);
+  const { loading, data, error } = useQuery(ALL_AUTHORS);
   if (!props.show) {
-    return null
+    return null;
   }
-  if (loading) return <div>...loading</div>
-  if (error) return <div>Error: {error}</div>
+  if (loading) return <div>...loading</div>;
+  if (error) return <div>Error: {error}</div>;
 
   const authors = data?.allAuthors ?? [];
 
@@ -19,25 +20,22 @@ const Authors = (props) => {
         <tbody>
           <tr>
             <th></th>
-            <th>
-              born
-            </th>
-            <th>
-              books
-            </th>
+            <th>born</th>
+            <th>books</th>
           </tr>
-          {authors.map(a =>
+          {authors.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
 
+      <SetAuthorBirthYear />
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;
