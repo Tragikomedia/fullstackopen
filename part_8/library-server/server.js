@@ -66,7 +66,7 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      if (!authors.includes(args.author))
+      if (!authors.find(author => author.name === args.author))
         authors.push({ name: args.author, id: uuid() });
       const book = {
         ...args,
