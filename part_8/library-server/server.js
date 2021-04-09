@@ -1,6 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 
-const { books, authors } = require('./resources');
+let { books, authors } = require('./resources');
 const { v1: uuid } = require('uuid');
 
 const typeDefs = gql`
@@ -33,6 +33,10 @@ const typeDefs = gql`
       published: Int!
       genres: [String!]!
     ): Book!
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
   }
 `;
 
@@ -71,6 +75,13 @@ const resolvers = {
       books.push(book);
       return book;
     },
+    editAuthor: (root, args) => {
+      const author = authors.find(author => args.name === author.name);
+      if (!author) return null;
+      const updatedAuthor = {...author, born: args.setBornTo};
+      authors = authors.map(origAuthor => origAuthor.id === author.id ? updatedAuthor : origAuthor);
+      return updatedAuthor;
+    }
   },
 };
 
