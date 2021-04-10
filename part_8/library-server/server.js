@@ -1,12 +1,11 @@
-const { ApolloServer, gql } = require('apollo-server');
-
-let { books, authors } = require('./resources');
-const { v1: uuid } = require('uuid');
+const { ApolloServer, UserInputError, gql } = require('apollo-server');
+const Book = require('./models/book');
+const Author = require('./models/author');
 
 const typeDefs = gql`
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String]!
     id: ID!
@@ -27,61 +26,83 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    addAuthor(name: String!, born: Int): Author!
     addBook(
       title: String!
       author: String!
       published: Int!
       genres: [String!]!
     ): Book!
-    editAuthor(
-      name: String!
-      setBornTo: Int!
-    ): Author
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
-const filterBooksByArgs = (args) => {
-  let booksToReturn = books;
-  if (args.author)
-    booksToReturn = booksToReturn.filter(
-      ({ author }) => author === args.author
-    );
-  if (args.genre)
-    booksToReturn = booksToReturn.filter(({ genres }) =>
-      genres.includes(args.genre)
-    );
-  return booksToReturn;
+const filterBooksByArgs = async (args) => {
+  const author = args.author
+    ? await Author.findOne({ name: args.author })
+    : null;
+  let books = author
+    ? await Book.find({ author: author.id })
+    : await Book.find({});
+  if (args.genre) {
+    books = books.filter((book) => book.genres.includes(args.genre));
+  }
+  return books;
 };
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => filterBooksByArgs(args),
-    allAuthors: () => authors,
+    allAuthors: () => Author.find({}),
   },
   Author: {
-    bookCount: (root) =>
-      books.filter((book) => book.author === root.name).length,
+    bookCount: async (root) => {
+      const books = await Book.find({ author: root.id });
+      return books.length;
+    },
+  },
+  Book: {
+    author: (root) => Author.findById(root.author),
   },
   Mutation: {
-    addBook: (root, args) => {
-      if (!authors.find(author => author.name === args.author))
-        authors.push({ name: args.author, id: uuid() });
-      const book = {
-        ...args,
-        id: uuid(),
-      };
-      books.push(book);
-      return book;
+    addAuthor: async (root, args) => {
+      try {
+        const author = new Author({ ...args });
+        await author.save();
+        return author;
+      } catch (error) {
+        throw new UserInputError(error.message, { invalidArgs: args });
+      }
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(author => args.name === author.name);
-      if (!author) return null;
-      const updatedAuthor = {...author, born: args.setBornTo};
-      authors = authors.map(origAuthor => origAuthor.id === author.id ? updatedAuthor : origAuthor);
-      return updatedAuthor;
-    }
+    addBook: async (root, args) => {
+      try {
+        let author = await Author.findOne({ name: args.author });
+        if (!author) {
+          author = new Author({ name: args.author });
+          await author.save();
+        }
+        const book = new Book({ ...args, author: author.id });
+        await book.save();
+        return book;
+      } catch (error) {
+        throw new UserInputError(error.message, { invalidArgs: args });
+      }
+    },
+    editAuthor: async (root, args) => {
+      try {
+        const author = await Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setBornTo },
+          { new: true }
+        );
+        if (!author) return null;
+        return author;
+      } catch (error) {
+        throw new UserInputError(error.message, { invalidArgs: args });
+      }
+    },
   },
 };
 
@@ -90,6 +111,4 @@ const server = new ApolloServer({
   resolvers,
 });
 
-server.listen().then(({ url }) => {
-  console.log(`Server ready at ${url}`);
-});
+module.exports = server;
