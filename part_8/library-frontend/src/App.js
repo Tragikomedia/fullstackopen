@@ -5,6 +5,7 @@ import Books from "./components/Books";
 import LoggedInfo from "./components/Login/LoggedInfo";
 import LoginForm from "./components/Login/LoginForm";
 import NewBook from "./components/NewBook";
+import Recommended from "./components/Recommended";
 import { GET_USER } from "./data/user/query";
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         {token && <button onClick={() => setPage("add")}>add book</button>}
+        {token && <button onClick={() => setPage("recommended")}>recommended</button>}
       </div>
 
       <Authors show={page === "authors"} />
@@ -38,6 +40,7 @@ const App = () => {
       {token && userData.data?.me?.username && (
         <NewBook show={page === "add"} />
       )}
+      <Recommended show={page === "recommended"}/>
     </div>
   );
 };
