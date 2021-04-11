@@ -91,9 +91,13 @@ const filterBooksByArgs = async (args) => {
 const authenticate = async ({ req }) => {
   const auth = req?.headers?.authorization;
   if (auth && auth.toLowerCase().startsWith('bearer ')) {
-    const token = jwt.verify(auth.substring(7), config.JWT_SECRET);
-    const currentUser = await User.findById(token.id);
-    return { currentUser };
+    try {
+      const token = jwt.verify(auth.substring(7), config.JWT_SECRET);
+      const currentUser = await User.findById(token.id);
+      return { currentUser };
+    } catch {
+      return {};
+    }
   }
 };
 

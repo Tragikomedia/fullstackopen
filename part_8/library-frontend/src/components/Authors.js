@@ -9,7 +9,7 @@ const Authors = (props) => {
     return null;
   }
   if (loading) return <div>...loading</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   const authors = data?.allAuthors ?? [];
 

@@ -8,7 +8,7 @@ const Books = (props) => {
     return null
   }
   if (loading) return <div>...loading</div>
-  if (error) return <div>Error: {error}</div>
+  if (error) return <div>Error: {error.message}</div>
 
   const books = data?.allBooks ?? [];
 
@@ -30,7 +30,7 @@ const Books = (props) => {
           {books.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           )}
