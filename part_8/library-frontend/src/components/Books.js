@@ -1,16 +1,22 @@
-import { useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../data/books/query';
-import React from 'react'
+import { useQuery } from "@apollo/client";
+import { ALL_BOOKS } from "../data/books/query";
+import React, { useEffect, useState } from "react";
 
 const Books = (props) => {
   const { loading, data, error } = useQuery(ALL_BOOKS);
-  if (!props.show) {
-    return null
-  }
-  if (loading) return <div>...loading</div>
-  if (error) return <div>Error: {error.message}</div>
+  const [books, setBooks] = useState([]);
 
-  const books = data?.allBooks ?? [];
+  useEffect(() => {
+    if (data?.allBooks) {
+      setBooks(data.allBooks);
+    }
+  }, [setBooks, data]);
+
+  if (!props.show) {
+    return null;
+  }
+  if (loading) return <div>...loading</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div>
@@ -20,24 +26,20 @@ const Books = (props) => {
         <tbody>
           <tr>
             <th></th>
-            <th>
-              author
-            </th>
-            <th>
-              published
-            </th>
+            <th>author</th>
+            <th>published</th>
           </tr>
-          {books.map(a =>
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;

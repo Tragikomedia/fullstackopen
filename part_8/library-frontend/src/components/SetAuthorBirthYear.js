@@ -1,18 +1,36 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
-import { useQuery } from '@apollo/client';
+import { useQuery } from "@apollo/client";
 import { EDIT_AUTHOR } from "../data/authors/mutation";
 import { ALL_AUTHORS } from "../data/authors/query";
+import { GET_USER } from "../data/user/query";
 import React from "react";
 
 const SetAuthorBirthYear = () => {
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
 
-  const {data} = useQuery(ALL_AUTHORS);
+  const { data } = useQuery(ALL_AUTHORS);
   const [editBirthYear] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (store, response) => {
+      const changed = response.data.editAuthor;
+      const dataInStore = store.readQuery({ query: ALL_AUTHORS });
+      console.log(dataInStore);
+      store.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          ...dataInStore,
+          allAuthors: dataInStore.allAuthors.map((data) =>
+            data.id === changed.id ? changed : data
+          ),
+        },
+      });
+    },
   });
+
+  const userResult = useQuery(GET_USER);
+
+  if (!userResult.data?.me?.username) return null;
 
   const authors = data?.allAuthors ?? [];
 
@@ -24,8 +42,8 @@ const SetAuthorBirthYear = () => {
         year: Number(year),
       },
     });
-    setName('');
-    setYear('');
+    setName("");
+    setYear("");
   };
 
   return (
@@ -33,8 +51,12 @@ const SetAuthorBirthYear = () => {
       <h3>Set birthyear</h3>
       <form onSubmit={onSubmit}>
         <div>
-          <select value={name} onChange={({target}) => setName(target.value)}>
-            {authors.map(author => <option key={author.id} value={author.name}>{author.name}</option>)}
+          <select value={name} onChange={({ target }) => setName(target.value)}>
+            {authors.map((author) => (
+              <option key={author.id} value={author.name}>
+                {author.name}
+              </option>
+            ))}
           </select>
         </div>
         <div>

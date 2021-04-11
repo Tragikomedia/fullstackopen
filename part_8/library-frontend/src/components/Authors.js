@@ -1,17 +1,21 @@
 import { ALL_AUTHORS } from "../data/authors/query";
 import { useQuery } from "@apollo/client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SetAuthorBirthYear from "./SetAuthorBirthYear";
 
 const Authors = (props) => {
   const { loading, data, error } = useQuery(ALL_AUTHORS);
+  const [authors, setAuthors] = useState([]);
+  useEffect(() => {
+    if (data?.allAuthors)
+    setAuthors(data.allAuthors);
+  }, [setAuthors, data]);
+
   if (!props.show) {
     return null;
   }
   if (loading) return <div>...loading</div>;
   if (error) return <div>Error: {error.message}</div>;
-
-  const authors = data?.allAuthors ?? [];
 
   return (
     <div>

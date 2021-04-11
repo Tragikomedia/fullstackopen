@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import { useLazyQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import LoggedInfo from "./components/Login/LoggedInfo";
@@ -10,17 +10,21 @@ import { GET_USER } from "./data/user/query";
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(localStorage.getItem("token"));
-  console.log(token);
-  const userData = useQuery(GET_USER, {
-    onError: (error) => {
-      localStorage.clear();
-      setToken(null);
-    }
+  const [getUser, userData] = useLazyQuery(GET_USER, {
+    fetchPolicy: "cache-and-network",
   });
+
+  useEffect(() => {
+    getUser();
+  }, [token, getUser]);
 
   return (
     <div>
-      {!(token && userData.data?.me?.username) ? <LoginForm setToken={setToken} /> : <LoggedInfo setToken={setToken}/>}
+      {!(token && userData.data?.me?.username) ? (
+        <LoginForm setToken={setToken} />
+      ) : (
+        <LoggedInfo setToken={setToken} />
+      )}
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
@@ -31,7 +35,9 @@ const App = () => {
 
       <Books show={page === "books"} />
 
-      {token && userData.data?.me?.username && <NewBook show={page === "add"} />}
+      {token && userData.data?.me?.username && (
+        <NewBook show={page === "add"} />
+      )}
     </div>
   );
 };
