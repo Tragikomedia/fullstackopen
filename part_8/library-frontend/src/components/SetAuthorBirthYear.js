@@ -15,7 +15,6 @@ const SetAuthorBirthYear = () => {
     update: (store, response) => {
       const changed = response.data.editAuthor;
       const dataInStore = store.readQuery({ query: ALL_AUTHORS });
-      console.log(dataInStore);
       store.writeQuery({
         query: ALL_AUTHORS,
         data: {

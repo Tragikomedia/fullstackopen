@@ -6,7 +6,9 @@ import BookTable from "./BookTable";
 
 const Recommended = ({ show }) => {
   const userData = useQuery(GET_USER);
-  const [getBooks, booksData] = useLazyQuery(BOOKS_BY_GENRE);
+  const [getBooks, booksData] = useLazyQuery(BOOKS_BY_GENRE, {
+    fetchPolicy: "cache-and-network",
+  });
   const [favoriteGenre, setFavoriteGenre] = useState("");
   const [books, setBooks] = useState([]);
 
