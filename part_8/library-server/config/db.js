@@ -15,5 +15,4 @@ const init = async () => {
     console.error('Could not connect to the database...');
   }
 };
-
 module.exports = { init };

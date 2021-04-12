@@ -82,15 +82,15 @@ const genToken = (user) => {
 };
 
 const filterBooksByArgs = async (args) => {
-  const author = args.author
-    ? await Author.findOne({ name: args.author })
-    : null;
-  let books = author
-    ? await Book.find({ author: author.id })
-    : await Book.find({});
+  const options = {};
   if (args.genre) {
-    books = books.filter((book) => book.genres.includes(args.genre));
+    options.genres = {
+      $in: [args.genre],
+    };
   }
+  let books = await Book.find(options).populate('author');
+  if (args.author)
+    books = books.filter((book) => book.author.name === args.author);
   return books;
 };
 
@@ -112,17 +112,13 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: (root, args) => filterBooksByArgs(args),
-    allAuthors: () => Author.find({}),
+    allAuthors: () => Author.find({}).populate('books'),
     me: (root, args, { currentUser }) => currentUser,
   },
   Author: {
     bookCount: async (root) => {
-      const books = await Book.find({ author: root.id });
-      return books.length;
+      return root.books.length;
     },
-  },
-  Book: {
-    author: (root) => Author.findById(root.author),
   },
   Mutation: {
     addAuthor: async (root, args, { currentUser }) => {

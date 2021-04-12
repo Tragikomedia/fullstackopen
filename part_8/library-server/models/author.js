@@ -9,6 +9,15 @@ const authorSchema = new Schema({
   born: {
     type: Number,
   },
+  books: {
+    type: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Book',
+      },
+    ],
+    default: [],
+  },
 });
 
 module.exports = model('Author', authorSchema);
