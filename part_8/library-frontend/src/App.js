@@ -1,4 +1,4 @@
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useSubscription } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
@@ -6,6 +6,7 @@ import LoggedInfo from "./components/Login/LoggedInfo";
 import LoginForm from "./components/Login/LoginForm";
 import NewBook from "./components/NewBook";
 import Recommended from "./components/Recommended";
+import { BOOK_ADDED } from "./data/books/subscription";
 import { GET_USER } from "./data/user/query";
 
 const App = () => {
@@ -19,6 +20,12 @@ const App = () => {
     getUser();
   }, [token, getUser]);
 
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(`Book ${subscriptionData.data.bookAdded.title} added`);
+    },
+  });
+
   return (
     <div>
       {!(token && userData.data?.me?.username) ? (
@@ -30,7 +37,9 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         {token && <button onClick={() => setPage("add")}>add book</button>}
-        {token && <button onClick={() => setPage("recommended")}>recommended</button>}
+        {token && (
+          <button onClick={() => setPage("recommended")}>recommended</button>
+        )}
       </div>
 
       <Authors show={page === "authors"} />
@@ -40,7 +49,7 @@ const App = () => {
       {token && userData.data?.me?.username && (
         <NewBook show={page === "add"} />
       )}
-      <Recommended show={page === "recommended"}/>
+      <Recommended show={page === "recommended"} />
     </div>
   );
 };
