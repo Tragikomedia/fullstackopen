@@ -2,6 +2,7 @@ const {
   ApolloServer,
   AuthenticationError,
   UserInputError,
+  PubSub,
   gql,
 } = require('apollo-server');
 const Book = require('./models/book');
@@ -9,6 +10,7 @@ const Author = require('./models/author');
 const User = require('./models/user');
 const config = require('./config/env');
 const jwt = require('jsonwebtoken');
+const pubSub = new PubSub();
 
 const typeDefs = gql`
   type Book {
@@ -59,6 +61,10 @@ const typeDefs = gql`
       favoriteGenre: String!
     ): User
     login(username: String!, password: String!): Token
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `;
 
@@ -145,6 +151,7 @@ const resolvers = {
         }
         const book = new Book({ ...args, author: author.id });
         await book.save();
+        pubSub.publish('BOOK_ADDED', { bookAdded: book });
         return book;
       } catch (error) {
         throw new UserInputError(error.message, { invalidArgs: args });
@@ -189,6 +196,11 @@ const resolvers = {
         throw new AuthenticationError('Invalid credentials');
       }
       return { value: token };
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubSub.asyncIterator(['BOOK_ADDED']),
     },
   },
 };
