@@ -67,10 +67,10 @@ const logMessage = (message: string): void => {
   console.log(message);
 }
 
-const calculateBmi = (height: number, weight: number) : void => {
+export const calculateBmi = (height: number, weight: number) : string => {
   const index = getIndex(height, weight);
   const message = getMessage(index);
-  logMessage(message);
+  return message;
 };
 
 const parseArgs = (args: Array<string>): Args => {
@@ -83,12 +83,12 @@ const parseArgs = (args: Array<string>): Args => {
   };
 };
 
-try {
-  const { height, weight } = parseArgs(process.argv);
-  calculateBmi(height, weight);
-} catch (error) {
-  console.log(`Error: ${error}`);
+if (require.main === module) {
+  try {
+    const { height, weight } = parseArgs(process.argv);
+    const result = calculateBmi(height, weight);
+    logMessage(result);
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 }
-
-
-export {};
