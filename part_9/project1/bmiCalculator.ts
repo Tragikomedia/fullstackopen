@@ -83,7 +83,12 @@ const parseArgs = (args: Array<string>): Args => {
   };
 };
 
-const { height, weight } = parseArgs(process.argv);
-calculateBmi(height, weight);
+try {
+  const { height, weight } = parseArgs(process.argv);
+  calculateBmi(height, weight);
+} catch (error) {
+  console.log(`Error: ${error}`);
+}
+
 
 export {};
