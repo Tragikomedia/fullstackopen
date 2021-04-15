@@ -85,3 +85,5 @@ const parseArgs = (args: Array<string>): Args => {
 
 const { height, weight } = parseArgs(process.argv);
 calculateBmi(height, weight);
+
+export {};
