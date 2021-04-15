@@ -61,8 +61,12 @@ const logResults = (results: Result): void => {
   console.log(results);
 }
 
-const {target, dailyHours} = parseArgs(process.argv);
-const result = vetExercises(target, dailyHours);
-logResults(result);
+try {
+  const {target, dailyHours} = parseArgs(process.argv);
+  const result = vetExercises(target, dailyHours);
+  logResults(result);
+} catch (error) {
+  console.log(`Error: ${error}`);
+}
 
 export {};
