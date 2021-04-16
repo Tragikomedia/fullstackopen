@@ -44,7 +44,10 @@ const parseArgs = (args: Array<string>): ExerciseArgs => {
   };
 };
 
-const vetExercises = (target: number, dailyHours: Array<number>): Result => {
+export const vetExercises = (
+  target: number,
+  dailyHours: Array<number>
+): Result => {
   const periodLength = dailyHours.length;
   const trainingDays = dailyHours.filter((hours) => hours > 0).length;
   const average =
@@ -65,12 +68,12 @@ const logResults = (results: Result): void => {
   console.log(results);
 };
 
-try {
-  const { target, dailyHours } = parseArgs(process.argv);
-  const result = vetExercises(target, dailyHours);
-  logResults(result);
-} catch (error) {
-  console.log(`Error: ${error}`);
+if (require.main === module) {
+  try {
+    const { target, dailyHours } = parseArgs(process.argv);
+    const result = vetExercises(target, dailyHours);
+    logResults(result);
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 }
-
-export {};
