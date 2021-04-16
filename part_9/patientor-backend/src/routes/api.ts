@@ -1,6 +1,7 @@
 import express from "express";
 import diagnoseService from "../services/diagnosesService";
 import patientsService from "../services/patientsService";
+import { toNewPatient } from "../utils";
 
 const router = express.Router();
 
@@ -16,6 +17,17 @@ router.get("/diagnoses", (_req, res) => {
 router.get("/patients", (_req, res) => {
   const patients = patientsService.getPatients();
   res.status(200).json(patients);
+});
+
+router.post("/patients", (req, res) => {
+  try {
+    const newPatient = toNewPatient(req.body);
+    const addedPatient = patientsService.addPatient(newPatient);
+    res.status(201).json(addedPatient);
+  } catch (error) {
+    //eslint-disable-next-line
+    res.status(400).json({ error: error.message });
+  }
 });
 
 export default router;
