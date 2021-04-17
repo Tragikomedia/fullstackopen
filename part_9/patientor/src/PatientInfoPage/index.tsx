@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 import { Container, Header, Icon } from "semantic-ui-react";
-import { useStateValue } from "../state";
+import { setPatientInfo, useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
 import axios from "axios";
@@ -18,7 +18,7 @@ const PatientInfoPage = () => {
         const { data: updatedPatient } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
         );
-        dispatch({ type: "SET_PATIENT_INFO", payload: updatedPatient });
+        dispatch(setPatientInfo(updatedPatient));
       } catch (e) {
         history.push("/");
       }
@@ -28,13 +28,13 @@ const PatientInfoPage = () => {
 
   if (!patientData?.ssn) return null;
 
-  const getIcon = (gender: string) => {
+  const getIcon = (gender: string): JSX.Element => {
     if (gender === "male") return <Icon name="mars" />;
     else if (gender === "female") return <Icon name="venus" />;
     return <Icon name="genderless" />;
   };
 
-  const icon = getIcon(patientData.gender);
+  const icon: JSX.Element = getIcon(patientData.gender);
 
   return (
     <div>
