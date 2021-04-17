@@ -1,4 +1,5 @@
 import { Diagnosis, Entry } from "../types";
+import DiagnosisTile from "./Diagnosis";
 
 const EntryTile = ({ entry }: { entry: Entry }) => {
   return (
@@ -10,7 +11,7 @@ const EntryTile = ({ entry }: { entry: Entry }) => {
       {entry.diagnosisCodes && (
         <ul>
           {entry.diagnosisCodes.map((code: Diagnosis["code"]) => (
-            <li key={code}>{code}</li>
+            <DiagnosisTile key={code} code={code} />
           ))}
         </ul>
       )}
