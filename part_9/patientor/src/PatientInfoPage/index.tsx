@@ -3,8 +3,9 @@ import { useHistory, useParams } from "react-router";
 import { Container, Header, Icon } from "semantic-ui-react";
 import { setPatientInfo, useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import axios from "axios";
+import EntryTile from "./Entry";
 
 const PatientInfoPage = () => {
   const [{ patients }, dispatch] = useStateValue();
@@ -49,6 +50,16 @@ const PatientInfoPage = () => {
             <br />
             occupation: {patientData.occupation}
           </p>
+        </Container>
+        <Container>
+          <Header as="h3">entries</Header>
+        </Container>
+        <Container>
+          {patientData.entries.length
+            ? patientData.entries.map((entry: Entry) => (
+                <EntryTile key={entry.id} entry={entry} />
+              ))
+            : "No entries"}
         </Container>
       </Container>
     </div>
