@@ -1,7 +1,7 @@
 import express from "express";
 import diagnoseService from "../services/diagnosesService";
 import patientsService from "../services/patientsService";
-import { toNewPatient } from "../utils";
+import { toNewPatient, toNewEntry } from "../utils";
 
 const router = express.Router();
 
@@ -17,6 +17,19 @@ router.get("/diagnoses", (_req, res) => {
 router.get("/patients", (_req, res) => {
   const patients = patientsService.getPatients();
   res.status(200).json(patients);
+});
+
+router.post("/patients/:id/entries", (req, res) => {
+  try {
+    const id = req.params.id;
+    const newEntry = toNewEntry(req.body);
+    const patient = patientsService.addEntry(id, newEntry);
+    if (!patient) return res.sendStatus(404);
+    return res.status(200).json(patient);
+  } catch (error) {
+    //eslint-disable-next-line
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 router.get("/patients/:id", (req, res) => {
