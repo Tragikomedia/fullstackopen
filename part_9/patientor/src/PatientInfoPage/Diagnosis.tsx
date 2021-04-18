@@ -14,7 +14,7 @@ const DiagnosisTile = ({ code }: { code: Diagnosis["code"] }) => {
   return (
     <>
       <li>
-        <p>{`${code} ${name}`}</p>
+        <p>{`${name}`}</p>
       </li>
     </>
   );
