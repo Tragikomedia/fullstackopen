@@ -22,6 +22,8 @@ const typeOptions: TypeOption[] = [
   { value: "OccupationalHealthcare", label: "Occupational healthcare" },
 ];
 
+const isDate = (date: string): boolean => Boolean(Date.parse(date));
+
 const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
 
@@ -40,25 +42,41 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = "Field is required";
+        const dateError = "Please provide a valid date";
         const errors: { [field: string]: string } = {};
         if (!values.date) {
           errors.date = requiredError;
-        }
+        } else if (!isDate(values.date)) errors.date = dateError;
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
         if (!values.description) {
-          errors.descriptions = requiredError;
+          errors.description = requiredError;
         }
         if (values.type === "OccupationalHealthcare") {
           if (!values.employerName) {
             errors.employerName = requiredError;
           }
+          if (
+            values.sickLeave &&
+            !(values.sickLeave?.startDate && values.sickLeave?.endDate)
+          ) {
+            errors.sickLeave =
+              "Please provide both start and end date of sick leave";
+          } else if (
+            values.sickLeave?.startDate &&
+            values.sickLeave?.endDate &&
+            (!isDate(values.sickLeave?.startDate) ||
+              !isDate(values.sickLeave?.endDate))
+          ) {
+            errors.sickLeave = dateError;
+          }
         }
         if (values.type === "Hospital") {
           if (!values.discharge?.date) {
             errors.discharge = requiredError;
-          }
+          } else if (!isDate(values.discharge?.date))
+            errors.discharge = dateError;
           if (!values.discharge?.criteria) {
             errors.discharge = requiredError;
           }
@@ -71,7 +89,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         return errors;
       }}
     >
-      {({ values,dirty, isValid, setFieldTouched, setFieldValue }) => {
+      {({ values, dirty, isValid, setFieldTouched, setFieldValue }) => {
         return (
           <Form>
             <SelectField label="Type" name="type" options={typeOptions} />
