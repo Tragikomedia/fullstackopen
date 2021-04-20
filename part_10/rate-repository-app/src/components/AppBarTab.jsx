@@ -6,11 +6,11 @@ import theme from '../theme';
 const AppBarTab = ({ text }) => {
   const style = {
     container: {
-      color: theme.colors.textPrimary,
       paddingHorizontal: 5,
       paddingVertical: 10,
     },
     text: {
+      color: theme.colors.heading,
       fontWeight: theme.fontWeights.bold
     }
   };
