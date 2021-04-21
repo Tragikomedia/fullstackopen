@@ -1,8 +1,8 @@
 import React from "react";
-import Text from "./Text";
+import SignInComponent from "./SignInForm";
 
 const SignIn = () => {
-  return <Text>The sign in view</Text>;
+  return <SignInComponent />;
 };
 
 export default SignIn;
