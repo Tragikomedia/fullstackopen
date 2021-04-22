@@ -21,11 +21,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderStyle: "solid",
     borderWidth: 1,
-    height: 20,
     marginBottom: 10,
     paddingHorizontal: 8,
-    paddingBottom: 15,
-    paddingTop: 20,
+    paddingVertical: 10,
   },
   button: {
     backgroundColor: theme.colors.primary,
@@ -36,7 +34,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: theme.colors.buttonText,
-    fontWeight: theme.fontWeights.bold
+    fontWeight: theme.fontWeights.bold,
+    textAlign: 'center',
   }
 });
 
