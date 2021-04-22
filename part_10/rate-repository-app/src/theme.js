@@ -7,6 +7,7 @@ const theme = {
     separator: "#ECECEC",
     border: "#000000",
     buttonText: "#FFFFFF",
+    error: '#d73a4a',
   },
   fontSizes: {
     body: 14,
