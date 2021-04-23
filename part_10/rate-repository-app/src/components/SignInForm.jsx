@@ -1,12 +1,12 @@
 import { Formik } from "formik";
-import React, { useEffect } from "react";
+import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import theme from "../theme";
 import FormikTextInput from "./FormikTextInput";
 import Text from "./Text";
 import * as yup from "yup";
 import { useSignIn } from "../hooks";
-import Storage from '../utils/authStorage';
+import { useHistory } from "react-router";
 
 const initialValues = {
   username: "",
@@ -76,16 +76,14 @@ const validationSchema = yup.object().shape({
 });
 
 const SignInComponent = () => {
-  const [signIn, {data}] = useSignIn();
-
-  useEffect(() => {
-    if (data) console.log(data);
-  }, [data]);
+  const [signIn] = useSignIn();
+  const history = useHistory();
 
   const onSubmit = async (values) => {
     const { username, password } = values;
     try {
       await signIn({ username, password });
+      history.push("/");
     } catch (e) {
       console.log(e);
     }
