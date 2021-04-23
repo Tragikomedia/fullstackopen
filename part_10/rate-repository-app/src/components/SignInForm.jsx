@@ -1,10 +1,11 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import theme from "../theme";
 import FormikTextInput from "./FormikTextInput";
 import Text from "./Text";
-import * as yup from 'yup';
+import * as yup from "yup";
+import { useSignIn } from "../hooks";
 
 const initialValues = {
   username: "",
@@ -35,8 +36,8 @@ const styles = StyleSheet.create({
   text: {
     color: theme.colors.buttonText,
     fontWeight: theme.fontWeights.bold,
-    textAlign: 'center',
-  }
+    textAlign: "center",
+  },
 });
 
 const Form = ({ onSubmit }) => {
@@ -63,17 +64,38 @@ const Form = ({ onSubmit }) => {
 };
 
 const validationSchema = yup.object().shape({
-  username: yup.string().required().min(2, 'Username must be at least 2 characters long'),
-  password: yup.string().required().min(5, 'Password must be at least 5 characters long'),
+  username: yup
+    .string()
+    .required()
+    .min(2, "Username must be at least 2 characters long"),
+  password: yup
+    .string()
+    .required()
+    .min(5, "Password must be at least 5 characters long"),
 });
 
 const SignInComponent = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const [signIn, {data}] = useSignIn();
+
+  useEffect(() => {
+    if (data) console.log(data);
+  }, [data]);
+
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+    try {
+      await signIn({ username, password });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+    >
       {({ handleSubmit }) => <Form onSubmit={handleSubmit} />}
     </Formik>
   );
