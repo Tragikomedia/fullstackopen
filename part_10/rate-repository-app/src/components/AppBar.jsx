@@ -4,6 +4,7 @@ import Constants from "expo-constants";
 import theme from "../theme";
 import AppBarTab from "./AppBarTab";
 import { Link } from "react-router-native";
+import { useAuthenticated } from "../hooks";
 
 const styles = StyleSheet.create({
   container: {
@@ -12,9 +13,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const tabs = [
+const tabs = (isAuthenticated) => [
   { text: "Repositories", route: "/" },
-  { text: "Sign in", route: "/signin" },
+  isAuthenticated
+    ? { text: "Sign out", route: "/signout" }
+    : { text: "Sign in", route: "/signin" },
 ];
 
 const renderItem = ({ item }) => {
@@ -26,10 +29,11 @@ const renderItem = ({ item }) => {
 };
 
 const AppBar = () => {
+  const isAuthenticated = useAuthenticated();
   return (
     <View style={styles.container}>
       <FlatList
-        data={tabs}
+        data={tabs(isAuthenticated)}
         renderItem={renderItem}
         keyExtractor={(item) => item.text}
         horizontal={true}

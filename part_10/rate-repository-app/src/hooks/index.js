@@ -1,6 +1,6 @@
 import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { SIGN_IN } from "../graphql/mutations";
-import { GET_REPOSITORIES } from "../graphql/queries";
+import { GET_REPOSITORIES, ME } from "../graphql/queries";
 import { useContext } from "react";
 
 import AuthStorageContext from "../contexts/AuthStorageContext";
@@ -13,7 +13,7 @@ export const useRepositories = () => {
   return { repositories: data?.repositories, loading };
 };
 
-const useAuthStorage = () => {
+export const useAuthStorage = () => {
   return useContext(AuthStorageContext);
 };
 
@@ -23,7 +23,7 @@ export const useSignIn = () => {
   const [mutate, result] = useMutation(SIGN_IN);
 
   const signIn = async ({ username, password }) => {
-    const {data} = await mutate({
+    const { data } = await mutate({
       variables: {
         username,
         password,
@@ -35,4 +35,10 @@ export const useSignIn = () => {
   };
 
   return [signIn, result];
+};
+
+export const useAuthenticated = () => {
+  const { data } = useQuery(ME);
+  console.log(data);
+  return Boolean(data?.authorizedUser);
 };
